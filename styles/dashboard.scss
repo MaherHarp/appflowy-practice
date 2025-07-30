@@ -73,6 +73,7 @@
   .sidebar-footer {
     padding: 16px 20px;
     border-top: 1px solid #334155;
+    position: relative;
 
     .user-info {
       display: flex;
@@ -92,6 +93,12 @@
         height: 40px;
         margin-right: 12px;
         background: #8427E0;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-weight: 600;
       }
 
       .user-details {
@@ -264,18 +271,91 @@
     }
 
     .sign-out-btn {
-      width: 100%;
-      background: transparent;
-      border: 1px solid #475569;
-      color: #cbd5e1;
+      width: 100% !important;
+      background: #000000 !important;
+      border: 1px solid #000000 !important;
+      color: white !important;
       font-size: 14px;
       padding: 8px 16px;
       border-radius: 6px;
       transition: all 0.2s ease;
 
       &:hover {
-        background: #475569;
-        color: white;
+        background: #1a1a1a !important;
+        border-color: #1a1a1a !important;
+        color: white !important;
+      }
+
+      &:focus {
+        background: #000000 !important;
+        border-color: #000000 !important;
+        color: white !important;
+      }
+    }
+
+    // User Dropdown
+    .user-dropdown {
+      position: absolute;
+      bottom: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border: 2px solid #8427E0;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      margin-bottom: 8px;
+      z-index: 1000;
+      overflow: hidden;
+      animation: dropdownSlideIn 0.2s ease-out;
+      min-width: 200px;
+      display: block !important;
+
+      .dropdown-item {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        padding: 12px 16px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        text-align: left;
+
+        &:hover {
+          background: #f8fafc;
+        }
+
+        &:first-child {
+          border-radius: 8px 8px 0 0;
+        }
+
+        &:last-child {
+          border-radius: 0 0 8px 8px;
+        }
+
+        .dropdown-icon {
+          font-size: 16px;
+          margin-right: 12px;
+          width: 20px;
+          text-align: center;
+        }
+
+        .dropdown-text {
+          font-size: 14px;
+          color: var(--color-text-primary);
+          font-weight: 500;
+        }
+      }
+    }
+
+    @keyframes dropdownSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
       }
     }
   }
@@ -2768,6 +2848,10 @@
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
       cursor: pointer;
       transition: all 0.2s ease;
+      height: 140px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
 
       .metric-title {
         font-size: 14px;
@@ -2787,27 +2871,11 @@
         font-size: 12px;
         color: #10b981;
         font-weight: 500;
-        margin-bottom: 16px;
+        margin-bottom: 0;
       }
 
       .metric-chart {
-        height: 40px;
-        background: #f1f5f9;
-        border-radius: 4px;
-        width: 80%;
-        transition: width 0.3s ease;
-
-        &.line {
-          background: linear-gradient(90deg, #8427E0 0%, #a855f7 100%);
-        }
-
-        &.bar {
-          background: linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%);
-        }
-
-        &.progress {
-          background: linear-gradient(90deg, #f59e0b 0%, #fbbf24 100%);
-        }
+        display: none;
       }
     }
   }
@@ -2842,8 +2910,10 @@
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     padding: 24px 24px 16px;
 
-    .card-title {
-      color: white;
+    .card-title,
+    h1,
+    .schedule-card h1 {
+      color: white !important;
       font-size: 20px;
       font-weight: 600;
       margin: 0;
@@ -2866,7 +2936,7 @@
       .schedule-time {
         font-size: 14px;
         font-weight: 600;
-        color: rgba(255, 255, 255, 0.9);
+        color: white;
         min-width: 80px;
         margin-right: 16px;
       }
@@ -2883,7 +2953,7 @@
 
         .schedule-topic {
           font-size: 14px;
-          color: rgba(255, 255, 255, 0.8);
+          color: white;
         }
       }
     }
@@ -2912,7 +2982,13 @@
         height: 32px;
         margin-right: 12px;
         background: #8427E0;
+        color: white;
         font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-weight: 600;
       }
 
       .activity-content {
@@ -3243,7 +3319,13 @@
         height: 28px;
         margin-right: 10px;
         background: #8427E0;
+        color: white;
         font-size: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-weight: 600;
       }
 
       .activity-content {
@@ -4109,6 +4191,79 @@
   }
 }
 
+// Alerts List
+.alerts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.alert-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-radius: 8px;
+  border-left: 4px solid;
+  background: #f8fafc;
+  transition: all 0.2s ease;
+
+  &.info {
+    border-left-color: #3b82f6;
+    background: #eff6ff;
+  }
+
+  &.warning {
+    border-left-color: #f59e0b;
+    background: #fffbeb;
+  }
+
+  &.critical {
+    border-left-color: #ef4444;
+    background: #fef2f2;
+  }
+
+  .alert-content {
+    flex: 1;
+
+    .alert-message {
+      font-size: 14px;
+      font-weight: 500;
+      color: #1e293b;
+      margin-bottom: 4px;
+    }
+
+    .alert-time {
+      font-size: 12px;
+      color: #64748b;
+    }
+  }
+
+  .alert-severity {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+
+    &.info {
+      background: #3b82f6;
+      color: white;
+    }
+
+    &.warning {
+      background: #f59e0b;
+      color: white;
+    }
+
+    &.critical {
+      background: #ef4444;
+      color: white;
+    }
+  }
+}
+
 // Agents Card
 .agents-card {
   border: 1px solid var(--color-border);
@@ -4159,6 +4314,240 @@
   padding: 24px;
   max-width: 1400px;
   margin: 0 auto;
+}
+
+// Chat Messages
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.message {
+  display: flex;
+  flex-direction: column;
+  max-width: 80%;
+  
+  &.user-message {
+    align-self: flex-end;
+    
+    .message-content {
+      background: var(--color-primary);
+      color: white;
+      border-radius: 18px 18px 4px 18px;
+    }
+  }
+  
+  &.ai-message {
+    align-self: flex-start;
+    
+    .message-content {
+      background: #f1f5f9;
+      color: var(--color-text-primary);
+      border-radius: 18px 18px 18px 4px;
+    }
+  }
+  
+  .message-content {
+    padding: 12px 16px;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  
+  .message-time {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    margin-top: 4px;
+    align-self: flex-end;
+  }
+}
+
+// Attendance Report
+.attendance-report {
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  
+  .report-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--color-border);
+    
+    h3 {
+      margin: 0;
+      color: var(--color-text-primary);
+      font-size: 18px;
+      font-weight: 600;
+    }
+    
+    .report-date {
+      font-size: 12px;
+      color: var(--color-text-secondary);
+    }
+  }
+  
+  .report-section {
+    margin-bottom: 24px;
+    
+    h4 {
+      margin: 0 0 16px 0;
+      color: var(--color-text-primary);
+      font-size: 16px;
+      font-weight: 600;
+    }
+  }
+  
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    
+    .stat-item {
+      text-align: center;
+      padding: 16px;
+      background: #f8fafc;
+      border-radius: 8px;
+      
+      .stat-value {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--color-primary);
+        margin-bottom: 4px;
+      }
+      
+      .stat-label {
+        font-size: 12px;
+        color: var(--color-text-secondary);
+      }
+    }
+  }
+  
+  .attendance-chart {
+    display: flex;
+    align-items: end;
+    gap: 16px;
+    height: 120px;
+    padding: 16px 0;
+    
+    .chart-bar {
+      flex: 1;
+      background: linear-gradient(to top, var(--color-primary), #a855f7);
+      border-radius: 4px 4px 0 0;
+      position: relative;
+      min-height: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      
+      .bar-label {
+        position: absolute;
+        bottom: -20px;
+        font-size: 11px;
+        color: var(--color-text-secondary);
+      }
+      
+      .bar-value {
+        position: absolute;
+        top: -20px;
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--color-text-primary);
+      }
+    }
+  }
+  
+  .class-attendance {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    
+    .class-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: #f8fafc;
+      border-radius: 8px;
+      
+      .class-name {
+        font-size: 14px;
+        color: var(--color-text-primary);
+      }
+      
+      .class-attendance-rate {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--color-primary);
+      }
+    }
+  }
+  
+  .attention-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    
+    .attention-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 8px;
+      
+      .student-name {
+        font-size: 14px;
+        color: var(--color-text-primary);
+      }
+      
+      .attendance-rate {
+        font-size: 14px;
+        font-weight: 600;
+        color: #dc2626;
+      }
+      
+      .trend {
+        font-size: 12px;
+        color: #dc2626;
+        font-weight: 500;
+      }
+    }
+  }
+  
+  .report-footer {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid var(--color-border);
+    
+    p {
+      margin: 0 0 12px 0;
+      font-size: 14px;
+      color: var(--color-text-primary);
+    }
+    
+    ul {
+      margin: 0;
+      padding-left: 20px;
+      
+      li {
+        font-size: 13px;
+        color: var(--color-text-secondary);
+        margin-bottom: 6px;
+        line-height: 1.4;
+      }
+    }
+  }
 }
 
 .assistant-header {
@@ -4792,6 +5181,29 @@
     color: #94a3b8;
   }
 
+  // Sidebar Dark Mode
+  .dashboard-sidebar {
+    background: #1e293b;
+    border-color: #334155;
+  }
+
+  .sidebar-footer {
+    .user-dropdown {
+      background: #1e293b;
+      border-color: #334155;
+
+      .dropdown-item {
+        &:hover {
+          background: #334155;
+        }
+
+        .dropdown-text {
+          color: white;
+        }
+      }
+    }
+  }
+
   // Reports View Dark Mode
   .reports-view {
     .reports-header .page-title {
@@ -4867,6 +5279,37 @@
     .empty-alerts .empty-message,
     .empty-agents .empty-message {
       color: #94a3b8;
+    }
+
+    // Alerts Dark Mode
+    .alert-item {
+      background: #334155;
+      border-color: #475569;
+
+      &.info {
+        border-left-color: #3b82f6;
+        background: #1e3a8a;
+      }
+
+      &.warning {
+        border-left-color: #f59e0b;
+        background: #92400e;
+      }
+
+      &.critical {
+        border-left-color: #ef4444;
+        background: #991b1b;
+      }
+
+      .alert-content {
+        .alert-message {
+          color: white;
+        }
+
+        .alert-time {
+          color: #94a3b8;
+        }
+      }
     }
 
     .add-agent-btn {
@@ -5022,6 +5465,57 @@
 
       &:hover {
         background: #64748b;
+      }
+    }
+
+    // Chat Messages Dark Mode
+    .message {
+      &.ai-message .message-content {
+        background: #334155;
+        color: white;
+      }
+    }
+
+    // Attendance Report Dark Mode
+    .attendance-report {
+      background: #1e293b;
+      border-color: #334155;
+
+      .report-header {
+        border-color: #334155;
+
+        h3 {
+          color: white;
+        }
+      }
+
+      .report-section h4 {
+        color: white;
+      }
+
+      .stats-grid .stat-item {
+        background: #334155;
+      }
+
+      .class-attendance .class-item {
+        background: #334155;
+
+        .class-name {
+          color: white;
+        }
+      }
+
+      .attention-list .attention-item {
+        background: #4c1d19;
+        border-color: #7f1d1d;
+      }
+
+      .report-footer {
+        border-color: #334155;
+
+        p {
+          color: white;
+        }
       }
     }
   }

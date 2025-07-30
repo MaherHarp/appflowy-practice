@@ -18,9 +18,42 @@ export default function DashboardPage() {
   const { session, isAuthenticated, status, signOut, isLoading } = useAuth();
   const router = useRouter();
   const [activeView, setActiveView] = useState<DashboardView>('home');
+  const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [accountType, setAccountType] = useState<AccountType>('teacher');
   const [showAccountPopup, setShowAccountPopup] = useState(false);
   const popupRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (!target.closest('.user-info') && !target.closest('.user-dropdown')) {
+        setShowUserDropdown(false);
+      }
+    };
+
+    if (showUserDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showUserDropdown]);
+
+  // Close popup when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
+        setShowAccountPopup(false);
+      }
+    }
+
+    if (showAccountPopup) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [showAccountPopup]);
 
   // For demo purposes, we'll skip authentication check
   // In production, you would want to keep the authentication check
@@ -132,58 +165,39 @@ export default function DashboardPage() {
                   {accountType === 'teacher' ? 'Teacher' : 'Student'}
                 </span>
               </div>
-              <button className={`dropdown-arrow ${showAccountPopup ? 'open' : ''}`}>▼</button>
+              <button 
+                className="dropdown-arrow" 
+                onClick={() => setShowUserDropdown(!showUserDropdown)}
+              >
+                {showUserDropdown ? '▲' : '▼'}
+              </button>
             </div>
             
-            {showAccountPopup && (
-              <div className="account-popup">
-                <div className="popup-header">
-                  <span className="popup-title">Switch Account</span>
-                </div>
-                <div className="popup-content">
-                  <button 
-                    className={`account-option ${accountType === 'teacher' ? 'active' : ''}`}
-                    onClick={() => handleAccountSwitch('teacher')}
-                  >
-                    <div className="account-info">
-                      <Avatar className="account-avatar">
-                        <AvatarFallback>T</AvatarFallback>
-                      </Avatar>
-                      <div className="account-details">
-                        <span className="account-name">Mr. Johnson</span>
-                        <span className="account-type">Teacher</span>
-                      </div>
-                    </div>
-                    {accountType === 'teacher' && <span className="check-icon">✓</span>}
-                  </button>
-                  
-                  <button 
-                    className={`account-option ${accountType === 'student' ? 'active' : ''}`}
-                    onClick={() => handleAccountSwitch('student')}
-                  >
-                    <div className="account-info">
-                      <Avatar className="account-avatar">
-                        <AvatarFallback>S</AvatarFallback>
-                      </Avatar>
-                      <div className="account-details">
-                        <span className="account-name">Alex Smith</span>
-                        <span className="account-type">Student</span>
-                      </div>
-                    </div>
-                    {accountType === 'student' && <span className="check-icon">✓</span>}
-                  </button>
-                </div>
+            {showUserDropdown && (
+              <div className="user-dropdown">
+                <button className="dropdown-item">
+                  <span className="dropdown-icon">👨‍🎓</span>
+                  <span className="dropdown-text">Student</span>
+                </button>
+                <button className="dropdown-item">
+                  <span className="dropdown-icon">👨‍👩‍👧‍👦</span>
+                  <span className="dropdown-text">Parents</span>
+                </button>
+                <button className="dropdown-item">
+                  <span className="dropdown-icon">👨‍💼</span>
+                  <span className="dropdown-text">Administrator</span>
+                </button>
               </div>
             )}
-          </div>
-                      <Button 
+            
+            <Button 
               onClick={() => router.push('/login')}
               disabled={isLoading}
-              variant="outline"
               className="sign-out-btn"
             >
               Sign Out
             </Button>
+          </div>
         </div>
       </aside>
 
@@ -1792,6 +1806,12 @@ function AIMonitoringView() {
     description: string;
     status: 'running' | 'stopped';
   }>>([]);
+  const [alerts, setAlerts] = useState<Array<{
+    id: string;
+    message: string;
+    severity: 'info' | 'warning' | 'critical';
+    timestamp: Date;
+  }>>([]);
   const [newAgent, setNewAgent] = useState({
     name: '',
     description: ''
@@ -1808,6 +1828,26 @@ function AIMonitoringView() {
       setAgents([...agents, agent]);
       setNewAgent({ name: '', description: '' });
       setShowAddAgentPopup(false);
+
+      // Create initial alert
+      const initialAlert = {
+        id: Date.now().toString(),
+        message: 'Checking Grade...',
+        severity: 'info' as const,
+        timestamp: new Date()
+      };
+      setAlerts([initialAlert, ...alerts]);
+
+      // Update alert after 3 seconds
+      setTimeout(() => {
+        setAlerts(prevAlerts => 
+          prevAlerts.map(alert => 
+            alert.id === initialAlert.id 
+              ? { ...alert, message: '0 Students found having a grade below 80' }
+              : alert
+          )
+        );
+      }, 3000);
     }
   };
 
@@ -1839,7 +1879,7 @@ function AIMonitoringView() {
           <div className="stat-label">Active Agents</div>
         </div>
         <div className="stat-card">
-          <div className="stat-value">0</div>
+          <div className="stat-value">{alerts.length}</div>
           <div className="stat-label">Alerts Today</div>
         </div>
         <div className="stat-card">
@@ -1883,10 +1923,28 @@ function AIMonitoringView() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="empty-alerts">
-            <div className="empty-icon">🔔</div>
-            <div className="empty-message">No alerts yet. Your agents will display notifications here.</div>
-          </div>
+          {alerts.length === 0 ? (
+            <div className="empty-alerts">
+              <div className="empty-icon">🔔</div>
+              <div className="empty-message">No alerts yet. Your agents will display notifications here.</div>
+            </div>
+          ) : (
+            <div className="alerts-list">
+              {alerts.map((alert) => (
+                <div key={alert.id} className={`alert-item ${alert.severity}`}>
+                  <div className="alert-content">
+                    <div className="alert-message">{alert.message}</div>
+                    <div className="alert-time">
+                      {alert.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </div>
+                  </div>
+                  <div className={`alert-severity ${alert.severity}`}>
+                    {alert.severity.charAt(0).toUpperCase() + alert.severity.slice(1)}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -1968,6 +2026,20 @@ function AIMonitoringView() {
 function AIAssistantView() {
   const [message, setMessage] = useState('');
   const [selectedCapability, setSelectedCapability] = useState('');
+  const [showAttendanceReport, setShowAttendanceReport] = useState(false);
+  const [chatMessages, setChatMessages] = useState<Array<{
+    id: string;
+    content: string;
+    isUser: boolean;
+    timestamp: Date;
+  }>>([
+    {
+      id: '1',
+      content: 'Welcome to Polaris AI Assistant! I\'m here to help you with educational analytics, student insights, curriculum planning, and much more. How can I assist you today?',
+      isUser: false,
+      timestamp: new Date()
+    }
+  ]);
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
@@ -1982,6 +2054,27 @@ function AIAssistantView() {
       e.preventDefault();
       handleSendMessage(e);
     }
+  };
+
+  const handleAttendanceTrends = () => {
+    // Add user message
+    const userMessage = {
+      id: Date.now().toString(),
+      content: 'Show me attendance trends',
+      isUser: true,
+      timestamp: new Date()
+    };
+    
+    // Add AI response
+    const aiMessage = {
+      id: (Date.now() + 1).toString(),
+      content: 'I\'ll generate an attendance trends report for you. Let me analyze the data...',
+      isUser: false,
+      timestamp: new Date()
+    };
+    
+    setChatMessages(prev => [...prev, userMessage, aiMessage]);
+    setShowAttendanceReport(true);
   };
 
   return (
@@ -2047,18 +2140,120 @@ function AIAssistantView() {
           </div>
 
           <div className="chat-messages">
-            <div className="welcome-message">
-              <div className="message-content">
-                Welcome to Polaris AI Assistant! I'm here to help you with educational analytics, student insights, curriculum planning, and much more. How can I assist you today?
+            {chatMessages.map((msg) => (
+              <div key={msg.id} className={`message ${msg.isUser ? 'user-message' : 'ai-message'}`}>
+                <div className="message-content">
+                  {msg.content}
+                </div>
+                <div className="message-time">
+                  {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </div>
               </div>
-              <div className="message-time">Just now</div>
-            </div>
+            ))}
+            
+            {showAttendanceReport && (
+              <div className="attendance-report">
+                <div className="report-header">
+                  <h3>📊 Attendance Trends Report</h3>
+                  <span className="report-date">Generated on {new Date().toLocaleDateString()}</span>
+                </div>
+                
+                <div className="report-section">
+                  <h4>📈 Overall Attendance Summary</h4>
+                  <div className="stats-grid">
+                    <div className="stat-item">
+                      <div className="stat-value">94.2%</div>
+                      <div className="stat-label">Average Attendance</div>
+                    </div>
+                    <div className="stat-item">
+                      <div className="stat-value">127</div>
+                      <div className="stat-label">Total Students</div>
+                    </div>
+                    <div className="stat-item">
+                      <div className="stat-value">+2.1%</div>
+                      <div className="stat-label">vs Last Month</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="report-section">
+                  <h4>📅 Monthly Attendance Breakdown</h4>
+                  <div className="attendance-chart">
+                    <div className="chart-bar" style={{ height: '85%' }}>
+                      <span className="bar-label">Sep</span>
+                      <span className="bar-value">92.1%</span>
+                    </div>
+                    <div className="chart-bar" style={{ height: '88%' }}>
+                      <span className="bar-label">Oct</span>
+                      <span className="bar-value">93.5%</span>
+                    </div>
+                    <div className="chart-bar" style={{ height: '91%' }}>
+                      <span className="bar-label">Nov</span>
+                      <span className="bar-value">94.2%</span>
+                    </div>
+                    <div className="chart-bar" style={{ height: '89%' }}>
+                      <span className="bar-label">Dec</span>
+                      <span className="bar-value">95.8%</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="report-section">
+                  <h4>🎯 Class Performance</h4>
+                  <div className="class-attendance">
+                    <div className="class-item">
+                      <span className="class-name">Biology 1 - 1st Period</span>
+                      <span className="class-attendance-rate">96.3%</span>
+                    </div>
+                    <div className="class-item">
+                      <span className="class-name">AP Biology - 2nd Period</span>
+                      <span className="class-attendance-rate">94.7%</span>
+                    </div>
+                    <div className="class-item">
+                      <span className="class-name">Biology 2 - 3rd Period</span>
+                      <span className="class-attendance-rate">91.2%</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="report-section">
+                  <h4>⚠️ Students Requiring Attention</h4>
+                  <div className="attention-list">
+                    <div className="attention-item">
+                      <span className="student-name">Emma Smith</span>
+                      <span className="attendance-rate">78%</span>
+                      <span className="trend">↓ 12%</span>
+                    </div>
+                    <div className="attention-item">
+                      <span className="student-name">Michael Johnson</span>
+                      <span className="attendance-rate">82%</span>
+                      <span className="trend">↓ 8%</span>
+                    </div>
+                    <div className="attention-item">
+                      <span className="student-name">Sarah Davis</span>
+                      <span className="attendance-rate">85%</span>
+                      <span className="trend">↓ 5%</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="report-footer">
+                  <p><strong>Key Insights:</strong></p>
+                  <ul>
+                    <li>Overall attendance has improved by 2.1% compared to last month</li>
+                    <li>Biology 1 shows the highest attendance rate at 96.3%</li>
+                    <li>3 students require immediate attention due to declining attendance</li>
+                    <li>December shows the highest monthly attendance at 95.8%</li>
+                  </ul>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="example-queries">
             <div className="queries-title">Try asking me about:</div>
             <div className="queries-grid">
-              <QueryButton icon="👤" text="Attendance Trends" />
+              <QueryButton icon="👤" text="Attendance Trends" onClick={handleAttendanceTrends} />
               <QueryButton icon="📈" text="Performance Report" />
               <QueryButton icon="⭐" text="Best Practices" />
               <QueryButton icon="⚠️" text="AI-Risk Students" />
@@ -2555,9 +2750,9 @@ function CapabilityCard({
   );
 }
 
-function QueryButton({ icon, text }: { icon: string; text: string }) {
+function QueryButton({ icon, text, onClick }: { icon: string; text: string; onClick?: () => void }) {
   return (
-    <button className="query-button">
+    <button className="query-button" onClick={onClick}>
       <span className="query-icon">{icon}</span>
       <span className="query-text">{text}</span>
     </button>
