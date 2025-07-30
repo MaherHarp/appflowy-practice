@@ -1,58 +1,222 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped
-with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# AppFlowy Polaris - Teacher Dashboard
 
-## Getting Started
+A modern, comprehensive teacher dashboard built with Next.js, featuring Google OAuth authentication, interactive reports, and a beautiful UI designed for educational professionals.
 
-First, run the development server:
+![AppFlowy Polaris Dashboard](https://img.shields.io/badge/Next.js-14.2.7-black?style=for-the-badge&logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.3-38B2AC?style=for-the-badge&logo=tailwind-css)
 
-```bash
-pnpm run dev
+## 🚀 Features
+
+### 🔐 Authentication System
+- **Google OAuth Integration**: Seamless sign-in with Google accounts
+- **Account Management**: Automatic account creation and linking
+- **Session Management**: Secure session handling with NextAuth.js
+- **Demo Mode**: Quick access with hardcoded credentials for testing
+
+### 📊 Teacher Dashboard
+- **Home Base View**: Comprehensive overview with metrics, schedule, and activities
+- **Reports Dashboard**: Advanced reporting with templates and analytics
+- **Responsive Design**: Works perfectly on desktop, tablet, and mobile
+- **Dark Mode Support**: Full dark/light theme compatibility
+
+### 📈 Reports & Analytics
+- **Report Templates**: 6 pre-built templates for common educational reports
+- **Interactive Reports**: Generate, preview, and share reports
+- **Filtering System**: Filter reports by type and time range
+- **Export Options**: Download reports in various formats
+
+### 🎨 Modern UI/UX
+- **AppFlowy Theme**: Consistent design system with custom styling
+- **Interactive Components**: Hover effects, animations, and smooth transitions
+- **Accessibility**: WCAG compliant with keyboard navigation
+- **Performance**: Optimized for fast loading and smooth interactions
+
+## 🛠️ Tech Stack
+
+- **Framework**: Next.js 14.2.7 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS + SCSS
+- **Authentication**: NextAuth.js
+- **Database**: Prisma + SQLite
+- **UI Components**: Radix UI + Custom Components
+- **State Management**: React Hooks
+- **Deployment**: Vercel Ready
+
+## 📦 Installation
+
+### Prerequisites
+- Node.js 18+ 
+- npm or yarn
+- Git
+
+### Quick Start
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/MaherHarp/appflowy-practice.git
+   cd appflowy-practice
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables**
+   ```bash
+   cp env.example .env
+   ```
+   
+   Edit `.env` and add your configuration:
+   ```env
+   DATABASE_URL="file:./dev.db"
+   NEXTAUTH_SECRET="your-secret-key"
+   NEXTAUTH_URL="http://localhost:3000"
+   GOOGLE_CLIENT_ID="your-google-client-id"
+   GOOGLE_CLIENT_SECRET="your-google-client-secret"
+   ```
+
+4. **Set up the database**
+   ```bash
+   npx prisma generate
+   npx prisma db push
+   ```
+
+5. **Run the development server**
+   ```bash
+   npm run dev
+   ```
+
+6. **Open your browser**
+   Navigate to [http://localhost:3000](http://localhost:3000)
+
+## 🎯 Demo Access
+
+### Quick Demo (No Setup Required)
+- **Dashboard**: `http://localhost:3000/dashboard`
+- **Login**: `http://localhost:3000/login`
+
+### Demo Credentials
+- **Email**: `teacher@demo.com`
+- **Password**: `password123`
+
+## 📱 Pages & Features
+
+### 🏠 Home Base Dashboard
+- **Student Metrics**: Total students, assignments, grades overview
+- **Daily Schedule**: Class schedule with topics and times
+- **Recent Activity**: Student and teacher activity feed
+- **AI Teaching Assistant**: Interactive prompts and suggestions
+- **Quick Actions**: Common teacher tasks and shortcuts
+- **Class Overview**: Visual class cards with student counts
+- **Student Progress**: Performance graphs and analytics
+- **Upcoming Deadlines**: Assignment due dates and reminders
+
+### 📊 Reports Dashboard
+- **Summary Statistics**: Total reports, scheduled, monthly, shared
+- **Report Templates**: 6 pre-built templates with generate/preview
+- **Recent Reports**: Filterable list with download/share actions
+- **Advanced Filtering**: Filter by type and time range
+- **Export Options**: Multiple format support
+
+### 🔧 Navigation
+- **Sidebar Navigation**: Persistent navigation with active states
+- **User Profile**: Teacher profile with role and avatar
+- **Responsive Design**: Mobile-friendly navigation
+
+## 🎨 Customization
+
+### Theme Customization
+The project uses CSS variables for easy theming:
+
+```scss
+:root {
+  --color-primary: #8427E0;
+  --color-primary-dark: #6B21A8;
+  --color-bg: #ffffff;
+  --color-bg-secondary: #f8fafc;
+  --color-text-primary: #1e293b;
+  --color-text-secondary: #64748b;
+  --color-border: #e2e8f0;
+}
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Adding New Pages
+1. Create a new page in `app/`
+2. Add navigation item in `app/dashboard/page.tsx`
+3. Create corresponding view component
+4. Add styles to `styles/dashboard.scss`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🔐 Authentication Setup
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and
-load Inter, a custom Google Font.
+### Google OAuth Setup
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project or select existing
+3. Enable Google+ API
+4. Create OAuth 2.0 credentials
+5. Add authorized redirect URIs:
+   - `http://localhost:3000/api/auth/callback/google`
+   - `https://yourdomain.com/api/auth/callback/google`
+6. Copy Client ID and Client Secret to `.env`
 
-## How to modify the content?
+### Database Schema
+The project includes a complete Prisma schema with:
+- User accounts and profiles
+- OAuth session management
+- Report data structure
+- Activity tracking
 
-### Static Text Content
+## 🚀 Deployment
 
-- `lib/config/home.tsx` - Home page content
-- `lib/config/pages.tsx` - Other pages content
+### Vercel (Recommended)
+1. Connect your GitHub repository to Vercel
+2. Add environment variables in Vercel dashboard
+3. Deploy automatically on push to main branch
 
-## Deploy
+### Other Platforms
+The project is compatible with:
+- Netlify
+- Railway
+- DigitalOcean App Platform
+- AWS Amplify
 
-### Automatic Testing Environment Deployment
+## 📚 Documentation
 
-We have set up an automated deployment process for the testing environment. When code is merged into either the `main`
-or `develop` branch, the system automatically deploys the changes to the testing environment. You can find the
-deployment workflow configuration in `.github/workflows/deploy_dev.yml`.
+- [Google OAuth Setup](GOOGLE_OAUTH_README.md)
+- [Teacher Dashboard Guide](TEACHER_DASHBOARD_README.md)
+- [Login Page Implementation](LOGIN_PAGE_README.md)
+- [Demo Instructions](DEMO_INSTRUCTIONS.md)
 
-### Manual Production Environment Deployment
+## 🤝 Contributing
 
-To deploy changes to the production environment, follow these steps:
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-1. Visit the project's GitHub page.
-2. Navigate to the "Actions" tab.
-3. Click on "Manual Deploy to Production."
-4. Select "Run workflow" to initiate a manual deployment to the production environment.
+## 📄 License
 
-## Testing
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-Our testing framework of choice is Cypress. Comprehensive testing information will be provided in this section as the
-project progresses.
+## 🙏 Acknowledgments
 
-```bash
-pnpm run build
-pnpm run start
+- **AppFlowy Team**: For the original design inspiration and theme
+- **Next.js Team**: For the amazing React framework
+- **Vercel**: For the deployment platform
+- **Open Source Community**: For the incredible tools and libraries
 
-pnpm run test
-# or
-pnpm run test:headless
-```
+## 📞 Support
 
-Feel free to update this README with more details as the project evolves. If you have any questions or need further
-assistance, please don't hesitate to reach out. Happy coding!
+- **Issues**: [GitHub Issues](https://github.com/MaherHarp/appflowy-practice/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/MaherHarp/appflowy-practice/discussions)
+- **Email**: [Your Email]
+
+---
+
+**Built with ❤️ for educators everywhere**
+
+[![GitHub stars](https://img.shields.io/github/stars/MaherHarp/appflowy-practice?style=social)](https://github.com/MaherHarp/appflowy-practice)
+[![GitHub forks](https://img.shields.io/github/forks/MaherHarp/appflowy-practice?style=social)](https://github.com/MaherHarp/appflowy-practice)
+[![GitHub issues](https://img.shields.io/github/issues/MaherHarp/appflowy-practice)](https://github.com/MaherHarp/appflowy-practice/issues)

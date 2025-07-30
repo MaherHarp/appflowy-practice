@@ -1,0 +1,66 @@
+# Demo Access Instructions
+
+## Quick Access to Teacher Dashboard
+
+### Option 1: Direct Dashboard Access
+You can now access the dashboard directly without logging in:
+- **URL**: `http://localhost:3000/dashboard`
+- **No authentication required** (for demo purposes)
+- **Clean interface** - no AppFlowy header or navigation
+
+### Option 2: Demo Login
+If you want to test the login flow:
+- **URL**: `http://localhost:3000/login`
+- **Email**: `teacher@demo.com`
+- **Password**: `password123`
+- **Clean interface** - no AppFlowy header or navigation
+
+## What You'll See
+
+### Teacher Dashboard Features:
+1. **Sidebar Navigation** with:
+   - Home Base (active)
+   - Reports
+   - AI Monitoring
+   - AI Assistant
+   - Notifications
+   - Admin Dashboard
+
+2. **Home Base View** with:
+   - **Metrics Cards**: Total Students (127), New Assignments (8), Assignments Due (15), Average Grade (87%)
+   - **Today's Schedule**: Purple gradient card with class schedule
+   - **Recent Activity**: Student activity feed
+   - **AI Teaching Assistant**: Interactive prompts and input
+   - **Quick Actions**: Grid of action buttons
+   - **Class Cards**: Color-coded class overview
+   - **Student Progress**: Visual progress graph
+   - **Sidebar Content**: Upcoming assignments
+
+3. **User Profile**: Mr. Johnson (Teacher) in sidebar footer
+
+### Reports Dashboard Features:
+1. **Summary Statistics**: Total Reports (47), Scheduled (12), This Month (8), Shared (23)
+2. **Report Templates**: 6 template cards with Generate/Preview buttons:
+   - Academic Performance
+   - Attendance Analysis  
+   - Teacher Performance
+   - Financial Summary
+   - Parent Engagement
+   - Curriculum Analysis
+3. **Recent Reports**: Filterable list with Download, Preview, Share, Delete actions
+4. **Action Buttons**: "+ Create Report" and "Schedule Report" in header
+5. **Filters**: Dropdown filters for report type and time range
+
+## Navigation
+- Click any navigation item in the sidebar to switch views
+- **Home Base**: Main teacher dashboard with metrics, schedule, and activities
+- **Reports**: Comprehensive reporting dashboard with templates and recent reports
+- All other views show placeholder content
+- "Sign Out" button redirects to login page
+
+## Demo Credentials Summary
+- **Email**: `teacher@demo.com`
+- **Password**: `password123`
+- **Direct Dashboard**: `http://localhost:3000/dashboard`
+
+Enjoy exploring the teacher dashboard! 🎓 

@@ -1,0 +1,157 @@
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #000212 0%, #1a1a2e 50%, #000212 100%);
+  position: relative;
+  overflow: hidden;
+
+  // Starry background effect
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+      radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+      radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+      radial-gradient(1px 1px at 90px 40px, #fff, transparent),
+      radial-gradient(1px 1px at 130px 80px, rgba(255,255,255,0.6), transparent),
+      radial-gradient(2px 2px at 160px 30px, #ddd, transparent);
+    background-repeat: repeat;
+    background-size: 200px 100px;
+    animation: sparkle 4s linear infinite;
+  }
+
+  .login-card {
+    position: relative;
+    z-index: 10;
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    border: none;
+    max-width: 400px;
+    width: 100%;
+    margin: 0 1rem;
+
+    .logo-container {
+      width: 64px;
+      height: 64px;
+      background: #000212;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+
+      .star-icon {
+        width: 32px;
+        height: 32px;
+        color: white;
+      }
+    }
+
+    .title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #000212;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
+    .subtitle {
+      color: #6b7280;
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+
+      label {
+        display: block;
+        font-size: 14px;
+        font-weight: 500;
+        color: #374151;
+        margin-bottom: 8px;
+      }
+    }
+
+    .links {
+      text-align: center;
+      margin-top: 24px;
+
+      a {
+        color: #6b7280;
+        text-decoration: none;
+        font-size: 14px;
+        transition: color 0.2s ease;
+
+        &:hover {
+          color: #000212;
+        }
+
+        &.signup-link {
+          color: #8427E0;
+          font-weight: 500;
+
+          &:hover {
+            color: #601DAA;
+          }
+        }
+      }
+    }
+  }
+}
+
+@keyframes sparkle {
+  0% {
+    transform: translateY(0px);
+  }
+  100% {
+    transform: translateY(-100px);
+  }
+}
+
+// Dark mode support
+:root.dark {
+  .login-page {
+    background: linear-gradient(135deg, #000212 0%, #1a1a2e 50%, #000212 100%);
+
+    .login-card {
+      background: #1f2937;
+      color: white;
+
+      .title {
+        color: white;
+      }
+
+      .subtitle {
+        color: #d1d5db;
+      }
+
+      .form-group label {
+        color: #d1d5db;
+      }
+
+      .links a {
+        color: #d1d5db;
+
+        &:hover {
+          color: white;
+        }
+
+        &.signup-link {
+          color: #a855f7;
+
+          &:hover {
+            color: #c084fc;
+          }
+        }
+      }
+    }
+  }
+} 

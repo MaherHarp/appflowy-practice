@@ -54,7 +54,7 @@ export default function App({
 
   const pathname = usePathname();
 
-  const isSinglePage = pathname.includes('invitation');
+  const isSinglePage = pathname.includes('invitation') || pathname.includes('dashboard') || pathname.includes('login');
 
   return (
     <>
