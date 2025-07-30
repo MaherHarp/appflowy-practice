@@ -2,7 +2,7 @@
 
 import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useSpring, animated } from '@react-spring/web';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,11 +11,15 @@ import { Input } from '@/components/ui/input';
 import '@/styles/dashboard.scss';
 
 type DashboardView = 'home' | 'reports' | 'ai-monitoring' | 'ai-assistant' | 'notifications' | 'alerts' | 'settings';
+type AccountType = 'teacher' | 'student';
 
 export default function DashboardPage() {
   const { session, isAuthenticated, status, signOut, isLoading } = useAuth();
   const router = useRouter();
   const [activeView, setActiveView] = useState<DashboardView>('home');
+  const [accountType, setAccountType] = useState<AccountType>('teacher');
+  const [showAccountPopup, setShowAccountPopup] = useState(false);
+  const popupRef = useRef<HTMLDivElement>(null);
 
   // For demo purposes, we'll skip authentication check
   // In production, you would want to keep the authentication check
@@ -42,7 +46,7 @@ export default function DashboardPage() {
   }
   */
 
-  const navItems = [
+  const teacherNavItems = [
     { id: 'home', label: 'Home Base', icon: '🏠' },
     { id: 'reports', label: 'Reports', icon: '📊' },
     { id: 'ai-monitoring', label: 'AI Monitoring', icon: '🤖' },
@@ -51,9 +55,39 @@ export default function DashboardPage() {
     { id: 'settings', label: 'Settings', icon: '⚙️' },
   ];
 
-  // Filter navigation items based on active view
+  const studentNavItems = [
+    { id: 'home', label: 'Home Base', icon: '🏠' },
+    { id: 'classes', label: 'Classes', icon: '📚' },
+    { id: 'assignments', label: 'Assignments', icon: '📝' },
+    { id: 'grades', label: 'Grades', icon: '📊' },
+    { id: 'reports', label: 'Reports', icon: '📋' },
+    { id: 'ai-assistant', label: 'AI Assistant', icon: '💬' },
+    { id: 'notifications', label: 'Notifications', icon: '🔔' },
+  ];
+
+  // Close popup when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
+        setShowAccountPopup(false);
+      }
+    }
+
+    if (showAccountPopup) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [showAccountPopup]);
+
+  // Filter navigation items based on account type
   const getFilteredNavItems = () => {
-    return navItems;
+    return accountType === 'teacher' ? teacherNavItems : studentNavItems;
+  };
+
+  const handleAccountSwitch = (newAccountType: AccountType) => {
+    setAccountType(newAccountType);
+    setActiveView('home'); // Reset to home view when switching accounts
+    setShowAccountPopup(false);
   };
 
   return (
@@ -78,18 +112,68 @@ export default function DashboardPage() {
         </nav>
 
         <div className="sidebar-footer">
-          <div className="user-info">
-            <Avatar className="user-avatar">
-              <AvatarImage src={session?.user?.image || ''} alt={session?.user?.name || ''} />
-              <AvatarFallback className="text-sm">
-                {session?.user?.name?.charAt(0) || session?.user?.email?.charAt(0) || 'T'}
-              </AvatarFallback>
-            </Avatar>
-            <div className="user-details">
-              <span className="user-name">Mr. Johnson</span>
-              <span className="user-role">Teacher</span>
+          <div className="user-info-container" ref={popupRef}>
+            <div 
+              className="user-info" 
+              onClick={() => setShowAccountPopup(!showAccountPopup)}
+            >
+              <Avatar className="user-avatar">
+                <AvatarImage src={session?.user?.image || ''} alt={session?.user?.name || ''} />
+                <AvatarFallback className="text-sm">
+                  {accountType === 'teacher' ? 'T' : 'S'}
+                </AvatarFallback>
+              </Avatar>
+              <div className="user-details">
+                <span className="user-name">
+                  {accountType === 'teacher' ? 'Mr. Johnson' : 'Alex Smith'}
+                </span>
+                <span className="user-role">
+                  {accountType === 'teacher' ? 'Teacher' : 'Student'}
+                </span>
+              </div>
+              <button className={`dropdown-arrow ${showAccountPopup ? 'open' : ''}`}>▼</button>
             </div>
-            <button className="dropdown-arrow">▼</button>
+            
+            {showAccountPopup && (
+              <div className="account-popup">
+                <div className="popup-header">
+                  <span className="popup-title">Switch Account</span>
+                </div>
+                <div className="popup-content">
+                  <button 
+                    className={`account-option ${accountType === 'teacher' ? 'active' : ''}`}
+                    onClick={() => handleAccountSwitch('teacher')}
+                  >
+                    <div className="account-info">
+                      <Avatar className="account-avatar">
+                        <AvatarFallback>T</AvatarFallback>
+                      </Avatar>
+                      <div className="account-details">
+                        <span className="account-name">Mr. Johnson</span>
+                        <span className="account-type">Teacher</span>
+                      </div>
+                    </div>
+                    {accountType === 'teacher' && <span className="check-icon">✓</span>}
+                  </button>
+                  
+                  <button 
+                    className={`account-option ${accountType === 'student' ? 'active' : ''}`}
+                    onClick={() => handleAccountSwitch('student')}
+                  >
+                    <div className="account-info">
+                      <Avatar className="account-avatar">
+                        <AvatarFallback>S</AvatarFallback>
+                      </Avatar>
+                      <div className="account-details">
+                        <span className="account-name">Alex Smith</span>
+                        <span className="account-type">Student</span>
+                      </div>
+                    </div>
+                    {accountType === 'student' && <span className="check-icon">✓</span>}
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
                       <Button 
               onClick={() => router.push('/login')}
@@ -104,14 +188,492 @@ export default function DashboardPage() {
 
       {/* Main Content */}
       <main className="dashboard-main">
-        {activeView === 'home' && <HomeBaseView />}
-        {activeView === 'reports' && <ReportsView />}
-        {activeView === 'ai-monitoring' && <AIMonitoringView />}
-        {activeView === 'ai-assistant' && <AIAssistantView />}
-        {activeView === 'notifications' && <NotificationsView />}
-        {activeView === 'alerts' && <AlertsView />}
-        {activeView === 'settings' && <SettingsView />}
+        {accountType === 'teacher' ? (
+          <>
+            {activeView === 'home' && <HomeBaseView />}
+            {activeView === 'reports' && <ReportsView />}
+            {activeView === 'ai-monitoring' && <AIMonitoringView />}
+            {activeView === 'ai-assistant' && <AIAssistantView />}
+            {activeView === 'notifications' && <NotificationsView />}
+            {activeView === 'alerts' && <AlertsView />}
+            {activeView === 'settings' && <SettingsView />}
+          </>
+        ) : (
+          <>
+            {activeView === 'home' && <StudentHomeBase />}
+            {activeView === 'classes' && <div className="coming-soon">Classes - Coming Soon</div>}
+            {activeView === 'assignments' && <StudentAssignments />}
+            {activeView === 'grades' && <div className="coming-soon">Grades - Coming Soon</div>}
+            {activeView === 'reports' && <div className="coming-soon">Reports - Coming Soon</div>}
+            {activeView === 'ai-assistant' && <div className="coming-soon">AI Assistant - Coming Soon</div>}
+            {activeView === 'notifications' && <div className="coming-soon">Notifications - Coming Soon</div>}
+          </>
+        )}
       </main>
+    </div>
+  );
+}
+
+// Student Assignments Component
+function StudentAssignments() {
+  const [activeTab, setActiveTab] = useState('All Assignments');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [classFilter, setClassFilter] = useState('All Classes');
+  const [typeFilter, setTypeFilter] = useState('All Types');
+  const [statusFilter, setStatusFilter] = useState('All Status');
+
+  const assignmentTabs = ['All Assignments', 'Active', 'Upcoming', 'Past Due'];
+  
+  const assignments = [
+    {
+      title: "Chapter 5: Cellular Respiration",
+      type: "Homework",
+      status: "Active",
+      due: "Tomorrow, 11:59 PM",
+      subject: "Biology 1 - Period 3",
+      points: 50,
+      submitted: 23,
+      graded: 18,
+      total: 28,
+      progress: "82%"
+    },
+    {
+      title: "Midterm Exam: Units 1-3",
+      type: "Test",
+      status: "Upcoming",
+      due: "Friday, 2:00 PM",
+      subject: "Biology 1 - Period 3",
+      points: 100,
+      submitted: 0,
+      graded: 0,
+      total: 28,
+      progress: "0%"
+    },
+    {
+      title: "Microscopy Lab Report",
+      type: "Lab",
+      status: "Completed",
+      due: "Last Monday, 11:59 PM",
+      subject: "Biology 1 - Period 3",
+      points: 75,
+      submitted: 28,
+      graded: 28,
+      total: 28,
+      progress: "100%"
+    },
+    {
+      title: "Quadratic Functions Problem Set",
+      type: "Homework",
+      status: "Past Due",
+      due: "Last Friday, 3:00 PM",
+      subject: "Algebra II - Period 2",
+      points: 40,
+      submitted: 25,
+      graded: 20,
+      total: 28,
+      progress: "89%"
+    },
+    {
+      title: "American Revolution Essay",
+      type: "Essay",
+      status: "Active",
+      due: "Next Monday, 11:59 PM",
+      subject: "US History - Period 4",
+      points: 100,
+      submitted: 12,
+      graded: 5,
+      total: 28,
+      progress: "43%"
+    }
+  ];
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'Active': return 'green';
+      case 'Upcoming': return 'orange';
+      case 'Past Due': return 'red';
+      case 'Completed': return 'blue';
+      default: return 'gray';
+    }
+  };
+
+  const getTypeIcon = (type: string) => {
+    switch (type) {
+      case 'Homework': return '📝';
+      case 'Test': return '📋';
+      case 'Lab': return '🧪';
+      case 'Essay': return '✍️';
+      default: return '📜';
+    }
+  };
+
+  return (
+    <div className="student-assignments">
+      {/* Header */}
+      <div className="assignments-header">
+        <div className="header-content">
+          <h1 className="page-title">Assignments</h1>
+          <p className="page-subtitle">Manage assignments and track student progress</p>
+        </div>
+        <Button className="create-assignment-btn">
+          <span className="btn-icon">+</span>
+          Create Assignment
+        </Button>
+      </div>
+
+      {/* Summary Stats */}
+      <div className="summary-stats">
+        <div className="stat-card blue">
+          <div className="stat-value">24</div>
+          <div className="stat-label">Total Assignments</div>
+        </div>
+        <div className="stat-card green">
+          <div className="stat-value">8</div>
+          <div className="stat-label">Active</div>
+        </div>
+        <div className="stat-card orange">
+          <div className="stat-value">5</div>
+          <div className="stat-label">Upcoming</div>
+        </div>
+        <div className="stat-card red">
+          <div className="stat-value">3</div>
+          <div className="stat-label">Past Due</div>
+        </div>
+      </div>
+
+      {/* Filters */}
+      <div className="filters-section">
+        <div className="search-filter">
+          <Input
+            type="text"
+            placeholder="Search assignments..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="search-input"
+          />
+        </div>
+        <div className="dropdown-filters">
+          <select 
+            value={classFilter} 
+            onChange={(e) => setClassFilter(e.target.value)}
+            className="filter-select"
+          >
+            <option>All Classes</option>
+            <option>Biology 1 - Period 3</option>
+            <option>Algebra II - Period 2</option>
+            <option>US History - Period 4</option>
+          </select>
+          <select 
+            value={typeFilter} 
+            onChange={(e) => setTypeFilter(e.target.value)}
+            className="filter-select"
+          >
+            <option>All Types</option>
+            <option>Homework</option>
+            <option>Test</option>
+            <option>Lab</option>
+            <option>Essay</option>
+          </select>
+          <select 
+            value={statusFilter} 
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="filter-select"
+          >
+            <option>All Status</option>
+            <option>Active</option>
+            <option>Upcoming</option>
+            <option>Past Due</option>
+            <option>Completed</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Assignment Tabs */}
+      <div className="assignment-tabs">
+        {assignmentTabs.map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`tab-button ${activeTab === tab ? 'active' : ''}`}
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
+
+      {/* Assignments List */}
+      <div className="assignments-list">
+        {assignments.map((assignment, index) => (
+          <Card key={index} className="assignment-card">
+            <CardContent className="assignment-content">
+              <div className="assignment-main">
+                <div className="assignment-header">
+                  <div className="assignment-title-section">
+                    <span className="assignment-icon">{getTypeIcon(assignment.type)}</span>
+                    <div className="title-info">
+                      <h3 className="assignment-title">{assignment.title}</h3>
+                      <div className="assignment-meta">
+                        <span className="assignment-type">{assignment.type}</span>
+                        <span className="assignment-subject">{assignment.subject}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="assignment-status-section">
+                    <span className={`status-badge ${getStatusColor(assignment.status)}`}>
+                      {assignment.status}
+                    </span>
+                    <div className="assignment-points">{assignment.points} pts</div>
+                  </div>
+                </div>
+                
+                <div className="assignment-details">
+                  <div className="due-date">
+                    <span className="due-label">Due:</span>
+                    <span className="due-time">{assignment.due}</span>
+                  </div>
+                  
+                  <div className="progress-section">
+                    <div className="progress-stats">
+                      <span>Submitted: {assignment.submitted}/{assignment.total}</span>
+                      <span>Graded: {assignment.graded}/{assignment.total}</span>
+                      <span className="progress-percentage">{assignment.progress}</span>
+                    </div>
+                    <div className="progress-bar">
+                      <div 
+                        className="progress-fill"
+                        style={{ width: assignment.progress }}
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="assignment-actions">
+                <Button size="sm" variant="outline" className="action-btn">
+                  View Details
+                </Button>
+                <Button size="sm" className="action-btn primary">
+                  {assignment.status === 'Completed' ? 'View Submission' : 'Start Work'}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// Student Home Base Component
+function StudentHomeBase() {
+  return (
+    <div className="student-home-base">
+      {/* Header */}
+      <div className="dashboard-header">
+        <h1 className="page-title">Welcome back, Jeffrey!</h1>
+        <p className="page-subtitle">Ready to continue your learning journey?</p>
+      </div>
+
+      {/* Quick Stats */}
+      <div className="quick-stats">
+        <div className="stat-card">
+          <div className="stat-label">Current GPA</div>
+          <div className="stat-value">87%</div>
+          <div className="stat-delta positive">+2% this month</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-label">Attendance</div>
+          <div className="stat-value">96%</div>
+          <div className="stat-status excellent">Excellent</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-label">Due This Week</div>
+          <div className="stat-value">3</div>
+          <div className="stat-completed">2 completed</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-label">Confidence Level</div>
+          <div className="stat-value">82%</div>
+          <div className="stat-delta positive">+5% this week</div>
+        </div>
+      </div>
+
+      {/* Main Content Grid */}
+      <div className="content-grid">
+        {/* Left Column */}
+        <div className="left-column">
+          {/* Personalized Learning */}
+          <Card className="learning-card">
+            <CardHeader>
+              <CardTitle className="section-title">🎯 Personalized Learning</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="recommended-practice">
+                <div className="practice-header">
+                  <h4>Recommended Practice</h4>
+                  <span className="priority high">High Priority</span>
+                </div>
+                <div className="practice-subject">Biology: Cell Division</div>
+                <div className="practice-note">Focus on mitosis and meiosis differences</div>
+                <div className="mastery-level">86% mastered</div>
+              </div>
+              
+              <div className="spaced-repetition">
+                <h4>Spaced Repetition</h4>
+                <div className="review-items">
+                  <div className="review-item urgent">
+                    <span className="topic">Quadratic Equations</span>
+                    <span className="due">Review Due Today</span>
+                  </div>
+                  <div className="review-item">
+                    <span className="topic">Photosynthesis</span>
+                    <span className="due">Review Due Tomorrow</span>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* AI Generated Quizzes */}
+          <Card className="quiz-card">
+            <CardHeader>
+              <CardTitle className="section-title">🤖 AI Generated Quizzes</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="quiz-grid">
+                <div className="quiz-item">
+                  <div className="quiz-header">
+                    <h4>Biology Quiz</h4>
+                    <span className="difficulty easy">Easy</span>
+                  </div>
+                  <div className="quiz-details">
+                    <span>5 questions • 10 min</span>
+                  </div>
+                  <div className="quiz-tags">
+                    <span className="tag">Cell Structure</span>
+                    <span className="tag">Organelles</span>
+                  </div>
+                  <Button size="sm" className="start-quiz">Start Quiz</Button>
+                </div>
+                
+                <div className="quiz-item">
+                  <div className="quiz-header">
+                    <h4>Math Practice</h4>
+                    <span className="difficulty medium">Medium</span>
+                  </div>
+                  <div className="quiz-details">
+                    <span>8 questions • 15 min</span>
+                  </div>
+                  <div className="quiz-tags">
+                    <span className="tag">Algebra</span>
+                    <span className="tag">Functions</span>
+                  </div>
+                  <Button size="sm" className="start-quiz">Start Quiz</Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Right Column */}
+        <div className="right-column">
+          {/* Upcoming Assignments */}
+          <Card className="assignments-card">
+            <CardHeader>
+              <CardTitle className="section-title">📋 Upcoming Assignments</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="assignment-list">
+                <div className="assignment-item urgent">
+                  <div className="assignment-header">
+                    <h4>Biology Lab Report</h4>
+                    <span className="urgency-badge urgent">Urgent</span>
+                  </div>
+                  <div className="assignment-subject">AP Biology</div>
+                  <div className="assignment-due">Tomorrow, 11:59 PM</div>
+                </div>
+                
+                <div className="assignment-item">
+                  <div className="assignment-header">
+                    <h4>Chapter 12 Problems</h4>
+                  </div>
+                  <div className="assignment-subject">Algebra II</div>
+                  <div className="assignment-due">Friday, 3:00 PM</div>
+                </div>
+                
+                <div className="assignment-item">
+                  <div className="assignment-header">
+                    <h4>Essay: American Revolution</h4>
+                  </div>
+                  <div className="assignment-subject">US History</div>
+                  <div className="assignment-due">Next Monday, 11:59 PM</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Performance Insights */}
+          <Card className="insights-card">
+            <CardHeader>
+              <CardTitle className="section-title">📈 Performance Insights</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="insight-item positive">
+                <div className="insight-icon">✅</div>
+                <div className="insight-text">Excelling in Mathematics with consistent A grades</div>
+              </div>
+              <div className="insight-item attention">
+                <div className="insight-icon">⚠️</div>
+                <div className="insight-text">Biology test scores show room for improvement</div>
+              </div>
+              <div className="insight-item recommendation">
+                <div className="insight-icon">💡</div>
+                <div className="insight-text">Join the study group for Biology</div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Teacher Notes */}
+          <Card className="notes-card">
+            <CardHeader>
+              <CardTitle className="section-title">📝 Teacher Notes</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="teacher-note">
+                <div className="note-header">
+                  <span className="teacher-name">Mr. Harp</span>
+                  <span className="subject">Biology</span>
+                  <span className="timestamp">2 days ago</span>
+                </div>
+                <div className="note-content">
+                  Excellent understanding of light-dependent reactions. Consider exploring the Calvin cycle.
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Student Dashboard Component (kept for fallback)
+function StudentDashboard() {
+  return (
+    <div className="student-dashboard">
+      <div className="dashboard-header">
+        <h1 className="page-title">Student Dashboard</h1>
+        <p className="page-subtitle">Welcome to your learning space</p>
+      </div>
+      <div className="empty-state">
+        <div className="empty-content">
+          <div className="empty-icon">📚</div>
+          <h3 className="empty-title">Your dashboard is ready</h3>
+          <p className="empty-description">
+            This is your student workspace. New features and tabs will be added here soon.
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
