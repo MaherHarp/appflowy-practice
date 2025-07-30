@@ -17,9 +17,42 @@ export default function DashboardPage() {
   const { session, isAuthenticated, status, signOut, isLoading } = useAuth();
   const router = useRouter();
   const [activeView, setActiveView] = useState<DashboardView>('home');
+  const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [accountType, setAccountType] = useState<AccountType>('teacher');
   const [showAccountPopup, setShowAccountPopup] = useState(false);
   const popupRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (!target.closest('.user-info') && !target.closest('.user-dropdown')) {
+        setShowUserDropdown(false);
+      }
+    };
+
+    if (showUserDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showUserDropdown]);
+
+  // Close popup when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
+        setShowAccountPopup(false);
+      }
+    }
+
+    if (showAccountPopup) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [showAccountPopup]);
 
   // For demo purposes, we'll skip authentication check
   // In production, you would want to keep the authentication check
@@ -148,7 +181,12 @@ export default function DashboardPage() {
                   {accountType === 'teacher' ? 'Teacher' : accountType === 'student' ? 'Student' : 'Parent'}
                 </span>
               </div>
-              <button className={`dropdown-arrow ${showAccountPopup ? 'open' : ''}`}>▼</button>
+              <button 
+                className="dropdown-arrow" 
+                onClick={() => setShowUserDropdown(!showUserDropdown)}
+              >
+                {showUserDropdown ? '▲' : '▼'}
+              </button>
             </div>
             
             {showAccountPopup && (
