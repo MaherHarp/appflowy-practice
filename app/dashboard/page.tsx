@@ -1672,9 +1672,155 @@ function StudentDashboard() {
 // Home Base View Component
 function HomeBaseView() {
   const [isVisible, setIsVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showSearchResults, setShowSearchResults] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState<any>(null);
+  const [showStudentPopup, setShowStudentPopup] = useState(false);
+  const [teacherComments, setTeacherComments] = useState('');
+  const searchRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setIsVisible(true);
+  }, []);
+
+  // Mock student data with additional I-starting names
+  const students = [
+    {
+      id: 1,
+      name: 'Ivan Chung',
+      year: 'Grade 11',
+      avatar: 'IC',
+      classes: ['Biology', 'Mathematics', 'English Literature', 'World History'],
+      recentGrades: [
+        { subject: 'Biology', grade: 'A', assignment: 'Cell Structure Lab' },
+        { subject: 'Mathematics', grade: 'B+', assignment: 'Quadratic Functions Quiz' },
+        { subject: 'English', grade: 'A-', assignment: 'Shakespeare Essay' }
+      ],
+      attendance: '94%',
+      gpa: '3.7',
+      aiSummary: 'Ivan demonstrates strong analytical skills and consistent academic performance. He excels in science subjects and shows particular strength in laboratory work. His participation in class discussions has improved significantly this semester, though he could benefit from more confidence in presenting his ideas to larger groups.'
+    },
+    {
+      id: 2,
+      name: 'Isabella Rodriguez',
+      year: 'Grade 10',
+      avatar: 'IR',
+      classes: ['Spanish Literature', 'Pre-Calculus', 'Chemistry', 'Art History'],
+      recentGrades: [
+        { subject: 'Spanish Literature', grade: 'A+', assignment: 'Poetry Analysis' },
+        { subject: 'Pre-Calculus', grade: 'A', assignment: 'Trigonometry Test' },
+        { subject: 'Chemistry', grade: 'B+', assignment: 'Organic Compounds Lab' }
+      ],
+      attendance: '96%',
+      gpa: '3.8',
+      aiSummary: 'Isabella excels in language arts and shows remarkable creativity in her written work. She demonstrates strong analytical thinking and consistently produces high-quality assignments. Her bilingual abilities are a significant asset in collaborative projects.'
+    },
+    {
+      id: 3,
+      name: 'Isaac Thompson',
+      year: 'Grade 12',
+      avatar: 'IT',
+      classes: ['AP Physics', 'Calculus BC', 'Computer Science', 'Engineering Design'],
+      recentGrades: [
+        { subject: 'AP Physics', grade: 'A', assignment: 'Electromagnetic Fields' },
+        { subject: 'Calculus BC', grade: 'A-', assignment: 'Integration Techniques' },
+        { subject: 'Computer Science', grade: 'A+', assignment: 'Algorithm Design Project' }
+      ],
+      attendance: '92%',
+      gpa: '3.9',
+      aiSummary: 'Isaac is a highly motivated student with exceptional problem-solving abilities. He shows particular strength in STEM subjects and often goes beyond curriculum requirements. His leadership in group projects and willingness to help peers makes him a valuable class member.'
+    },
+    {
+      id: 4,
+      name: 'Iris Kim',
+      year: 'Grade 9',
+      avatar: 'IK',
+      classes: ['Algebra I', 'Biology', 'World Geography', 'English I'],
+      recentGrades: [
+        { subject: 'Algebra I', grade: 'B+', assignment: 'Linear Equations Quiz' },
+        { subject: 'Biology', grade: 'A', assignment: 'Ecosystem Project' },
+        { subject: 'English I', grade: 'A-', assignment: 'Character Analysis Essay' }
+      ],
+      attendance: '98%',
+      gpa: '3.6',
+      aiSummary: 'Iris is an enthusiastic learner who consistently demonstrates strong work ethic and attention to detail. She adapts well to high school expectations and shows particular interest in environmental science. Her organizational skills and positive attitude contribute to a productive classroom environment.'
+    },
+    {
+      id: 5,
+      name: 'Ian Foster',
+      year: 'Grade 11',
+      avatar: 'IF',
+      classes: ['AP History', 'English Literature', 'Statistics', 'Psychology'],
+      recentGrades: [
+        { subject: 'AP History', grade: 'A', assignment: 'Civil Rights Movement Essay' },
+        { subject: 'English Literature', grade: 'B+', assignment: 'Modernist Poetry Analysis' },
+        { subject: 'Psychology', grade: 'A-', assignment: 'Behavioral Study Report' }
+      ],
+      attendance: '89%',
+      gpa: '3.5',
+      aiSummary: 'Ian demonstrates strong critical thinking skills and excels in humanities subjects. He brings thoughtful perspectives to class discussions and shows genuine interest in understanding complex social issues. Attendance could be improved, but when present, he is highly engaged.'
+    },
+    {
+      id: 6,
+      name: 'Sarah Chen',
+      year: 'Grade 10',
+      avatar: 'SC',
+      classes: ['Chemistry', 'Algebra II', 'Spanish', 'Art'],
+      recentGrades: [
+        { subject: 'Chemistry', grade: 'A+', assignment: 'Molecular Bonds Test' },
+        { subject: 'Algebra II', grade: 'A', assignment: 'Systems of Equations' }
+      ],
+      attendance: '98%',
+      gpa: '3.9',
+      aiSummary: 'Sarah is an exceptional student with outstanding academic performance across all subjects. She demonstrates leadership qualities and often helps her peers understand complex concepts.'
+    },
+    {
+      id: 7,
+      name: 'Marcus Johnson',
+      year: 'Grade 12',
+      avatar: 'MJ',
+      classes: ['Physics', 'Calculus', 'Computer Science', 'Economics'],
+      recentGrades: [
+        { subject: 'Physics', grade: 'B', assignment: 'Momentum Lab' },
+        { subject: 'Calculus', grade: 'A-', assignment: 'Derivatives Test' }
+      ],
+      attendance: '91%',
+      gpa: '3.5',
+      aiSummary: 'Marcus shows strong aptitude in STEM subjects and has excellent problem-solving skills. He would benefit from more consistent study habits and improved time management.'
+    }
+  ];
+
+  // Filter students based on search query
+  const filteredStudents = students.filter(student =>
+    student.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Handle search input change
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    setShowSearchResults(value.length > 0);
+  };
+
+  // Handle student selection
+  const handleStudentSelect = (student: any) => {
+    setSelectedStudent(student);
+    setShowStudentPopup(true);
+    setShowSearchResults(false);
+    setSearchQuery('');
+    setTeacherComments('');
+  };
+
+  // Close search results when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setShowSearchResults(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const containerSpringProps = useSpring({
@@ -1689,10 +1835,33 @@ function HomeBaseView() {
       <div className="dashboard-header">
         <h1 className="page-title">Home Base</h1>
         <div className="header-actions">
-          <Input 
-            placeholder="Search classes, students, assignments..." 
-            className="search-input"
-          />
+          <div className="search-container" ref={searchRef}>
+            <Input 
+              placeholder="Search students..." 
+              className="search-input"
+              value={searchQuery}
+              onChange={handleSearchChange}
+            />
+            {showSearchResults && filteredStudents.length > 0 && (
+              <div className="appflowy-search-results">
+                {filteredStudents.map((student) => (
+                  <div 
+                    key={student.id}
+                    className="appflowy-search-result-item"
+                    onClick={() => handleStudentSelect(student)}
+                  >
+                    <Avatar className="appflowy-student-avatar">
+                      <AvatarFallback>{student.avatar}</AvatarFallback>
+                    </Avatar>
+                    <div className="appflowy-student-info">
+                      <span className="appflowy-student-name">{student.name}</span>
+                      <span className="appflowy-student-year">{student.year}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
           <Button className="create-class-btn">Create Class</Button>
         </div>
       </div>
@@ -1912,6 +2081,136 @@ function HomeBaseView() {
           </Card>
         </div>
       </div>
+      
+      {/* Student Profile Popup */}
+      {showStudentPopup && selectedStudent && (
+        <div className="appflowy-popup-overlay">
+          <div className="appflowy-popup-content appflowy-student-profile-popup">
+            <div className="appflowy-popup-header">
+              <h2 className="appflowy-popup-title">Student Profile</h2>
+              <button 
+                className="appflowy-popup-close" 
+                onClick={() => setShowStudentPopup(false)}
+              >
+                ×
+              </button>
+            </div>
+            <div className="appflowy-popup-body">
+              <div className="appflowy-student-profile-content">
+                {/* Student Header Card */}
+                <div className="appflowy-student-header-card">
+                  <div className="appflowy-student-avatar-section">
+                    <Avatar className="appflowy-student-profile-avatar">
+                      <AvatarFallback>{selectedStudent.avatar}</AvatarFallback>
+                    </Avatar>
+                  </div>
+                  <div className="appflowy-student-info-section">
+                    <div className="appflowy-student-name-container">
+                      <h3 className="appflowy-student-profile-name">{selectedStudent.name}</h3>
+                      <span className="appflowy-student-profile-year">{selectedStudent.year}</span>
+                    </div>
+                    <div className="appflowy-student-stats-grid">
+                      <div className="appflowy-stat-card">
+                        <div className="appflowy-stat-icon">📊</div>
+                        <div className="appflowy-stat-content">
+                          <span className="appflowy-stat-label">GPA</span>
+                          <span className="appflowy-stat-value">{selectedStudent.gpa}</span>
+                        </div>
+                      </div>
+                      <div className="appflowy-stat-card">
+                        <div className="appflowy-stat-icon">📅</div>
+                        <div className="appflowy-stat-content">
+                          <span className="appflowy-stat-label">Attendance</span>
+                          <span className="appflowy-stat-value">{selectedStudent.attendance}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Classes Card */}
+                <div className="appflowy-section-card">
+                  <div className="appflowy-section-header">
+                    <h4 className="appflowy-section-title">📚 Current Classes</h4>
+                  </div>
+                  <div className="appflowy-classes-grid">
+                    {selectedStudent.classes.map((className, index) => (
+                      <div key={index} className="appflowy-class-item">
+                        <div className="appflowy-class-icon">📖</div>
+                        <span className="appflowy-class-name">{className}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Performance Card */}
+                <div className="appflowy-section-card">
+                  <div className="appflowy-section-header">
+                    <h4 className="appflowy-section-title">🎯 Recent Performance</h4>
+                  </div>
+                  <div className="appflowy-performance-grid">
+                    {selectedStudent.recentGrades.map((grade, index) => (
+                      <div key={index} className="appflowy-performance-card">
+                        <div className="appflowy-performance-header">
+                          <div className="appflowy-performance-subject">
+                            <span className="appflowy-subject-icon">📝</span>
+                            <span className="appflowy-subject-name">{grade.subject}</span>
+                          </div>
+                          <div className={`appflowy-performance-grade appflowy-grade-${grade.grade.toLowerCase().replace('+', 'plus').replace('-', 'minus')}`}>
+                            {grade.grade}
+                          </div>
+                        </div>
+                        <div className="appflowy-performance-assignment">{grade.assignment}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* AI Summary Card */}
+                <div className="appflowy-section-card appflowy-ai-summary-card">
+                  <div className="appflowy-section-header">
+                    <h4 className="appflowy-section-title">🤖 AI Performance Summary</h4>
+                  </div>
+                  <div className="appflowy-ai-summary-content">
+                    <div className="appflowy-ai-summary-text">
+                      <p>{selectedStudent.aiSummary}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Teacher Comments Card */}
+                <div className="appflowy-section-card">
+                  <div className="appflowy-section-header">
+                    <h4 className="appflowy-section-title">💬 Teacher Comments</h4>
+                  </div>
+                  <div className="appflowy-comments-section">
+                    <textarea
+                      className="appflowy-teacher-comments-input"
+                      placeholder="Add your observations about this student's performance, behavior, or areas for improvement. These comments will be included in future AI-generated reports."
+                      value={teacherComments}
+                      onChange={(e) => setTeacherComments(e.target.value)}
+                      rows={4}
+                    />
+                    <div className="appflowy-comments-actions">
+                      <Button 
+                        className="appflowy-save-comments-btn"
+                        onClick={() => {
+                          // In a real app, this would save to database
+                          alert('Comments saved successfully!');
+                          setTeacherComments('');
+                        }}
+                        disabled={!teacherComments.trim()}
+                      >
+                        💾 Save Comments
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

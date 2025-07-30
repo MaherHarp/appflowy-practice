@@ -2901,19 +2901,25 @@
 
 // Schedule Card
 .schedule-card {
-  background: linear-gradient(135deg, #8427E0 0%, #a855f7 100%);
-  border: none;
+  background: white;
+  border: 1px solid #e2e8f0;
   border-radius: 16px;
-  color: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+  }
 
   .card-header {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid #f1f5f9;
     padding: 24px 24px 16px;
 
     .card-title,
     h1,
     .schedule-card h1 {
-      color: white !important;
+      color: var(--color-text-primary) !important;
       font-size: 20px;
       font-weight: 600;
       margin: 0;
@@ -2927,7 +2933,12 @@
       display: flex;
       align-items: flex-start;
       padding: 16px 24px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      border-bottom: 1px solid #f1f5f9;
+      transition: background 0.15s ease;
+      
+      &:hover {
+        background: #f8fafc;
+      }
 
       &:last-child {
         border-bottom: none;
@@ -2936,9 +2947,13 @@
       .schedule-time {
         font-size: 14px;
         font-weight: 600;
-        color: white;
+        color: #8427E0;
         min-width: 80px;
         margin-right: 16px;
+        background: #f3f0ff;
+        padding: 6px 12px;
+        border-radius: 8px;
+        text-align: center;
       }
 
       .schedule-details {
@@ -2947,13 +2962,13 @@
         .schedule-class {
           font-size: 16px;
           font-weight: 600;
-          color: white;
+          color: var(--color-text-primary);
           margin-bottom: 4px;
         }
 
         .schedule-topic {
           font-size: 14px;
-          color: white;
+          color: var(--color-text-secondary);
         }
       }
     }
@@ -3898,82 +3913,200 @@
   }
 }
 
-// Popup Styles
-.popup-overlay {
+// AppFlowy Student Profile Popup
+.appflowy-popup-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  backdrop-filter: blur(4px);
+  animation: appflowyfadeIn 0.3s ease-out;
 }
 
-.popup-content {
+.appflowy-popup-content {
   background: white;
-  border-radius: 16px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  max-width: 500px;
+  border-radius: 20px;
   width: 90%;
+  max-width: 900px;
   max-height: 90vh;
-  overflow: hidden;
-  animation: popupSlideIn 0.3s ease-out;
+  overflow-y: auto;
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  animation: appflowyslideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 1px solid rgba(132, 39, 224, 0.1);
 }
 
-@keyframes popupSlideIn {
-  from {
-    opacity: 0;
-    transform: scale(0.9) translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
-
-.popup-header {
+.appflowy-popup-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 24px 24px 0 24px;
-  border-bottom: 1px solid var(--color-border);
+  padding: 28px 36px;
+  border-bottom: 1.5px solid #f1f5f9;
+  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+  border-radius: 20px 20px 0 0;
+  position: relative;
 
-  .popup-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--color-text-primary);
-    margin: 0;
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -1.5px;
+    left: 36px;
+    right: 36px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #8427E0, transparent);
+    opacity: 0.3;
   }
 
-  .popup-close {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    color: var(--color-text-secondary);
+  .appflowy-popup-title {
+    font-size: 28px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #1e293b, #475569);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    &::before {
+      content: '👤';
+      font-size: 24px;
+      filter: none;
+      -webkit-text-fill-color: initial;
+    }
+  }
+
+  .appflowy-popup-close {
+    background: rgba(255, 255, 255, 0.8);
+    border: 1.5px solid #e2e8f0;
+    font-size: 24px;
+    color: #64748b;
     cursor: pointer;
-    padding: 4px;
-    border-radius: 4px;
-    transition: all 0.2s;
+    padding: 0;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+    line-height: 1;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
     &:hover {
-      background: var(--color-bg-secondary);
-      color: var(--color-text-primary);
+      background: #fee2e2;
+      border-color: #fca5a5;
+      color: #dc2626;
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
+    }
+
+    &:active {
+      transform: scale(0.95);
     }
   }
 }
 
+.appflowy-popup-body {
+  padding: 36px;
+  background: #ffffff;
+  border-radius: 0 0 20px 20px;
+}
+
+@keyframes appflowyfadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes appflowyslideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 .popup-body {
-  padding: 24px;
+  }
 
   .form-group {
     margin-bottom: 20px;
   }
 
-  .report-content {
+  .form-label {
+    display: block;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.2s;
+
+      &:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px rgba(147, 39, 255, 0.1);
+      }
+
+      &::placeholder {
+        color: var(--color-text-secondary);
+      }
+    }
+
+    .form-textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: inherit;
+      resize: vertical;
+      min-height: 100px;
+      transition: border-color 0.2s;
+
+      &:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px rgba(147, 39, 255, 0.1);
+      }
+
+      &::placeholder {
+        color: var(--color-text-secondary);
+      }
+    }
+
+.popup-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 0 24px 24px 24px;
+  border-top: 1px solid var(--color-border);
+  margin-top: 8px;
+
+  .cancel-btn {
+    background: white;
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-border);
     white-space: pre-wrap;
     line-height: 1.6;
     color: #1e293b;
@@ -6530,4 +6663,646 @@
     }
   }
 }
-} 
+
+// Student Search Functionality Styles
+.search-container {
+  position: relative;
+  width: 300px;
+
+  .search-input {
+    width: 100%;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 14px;
+    
+    &::placeholder {
+      color: #94a3b8;
+    }
+    
+    &:focus {
+      border-color: #8427E0;
+      box-shadow: 0 0 0 3px rgba(132, 39, 224, 0.1);
+    }
+  }
+
+  .search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    max-height: 300px;
+    overflow-y: auto;
+    margin-top: 4px;
+
+    .search-result-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+      border-bottom: 1px solid #f1f5f9;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      &:hover {
+        background: #f8fafc;
+      }
+
+      .student-avatar {
+        width: 40px;
+        height: 40px;
+        background: #8427E0;
+        color: white;
+        font-weight: 600;
+      }
+
+      .student-info {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+
+        .student-name {
+          font-weight: 600;
+          color: var(--color-text-primary);
+          font-size: 14px;
+        }
+
+        .student-year {
+          font-size: 12px;
+          color: var(--color-text-secondary);
+        }
+      }
+    }
+  }
+}
+
+// Student Profile Popup Styles
+.student-profile-popup {
+  max-width: 700px;
+  width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
+
+  .appflowy-student-profile-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    // Student Header Card
+    .appflowy-student-header-card {
+      display: flex;
+      align-items: center;
+      background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+      border: 1.5px solid #e2e8f0;
+      border-radius: 20px;
+      padding: 32px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+      position: relative;
+      overflow: hidden;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #8427E0, #a855f7, #8427E0);
+      }
+
+      .appflowy-student-avatar-section {
+        margin-right: 28px;
+
+        .appflowy-student-profile-avatar {
+          width: 80px;
+          height: 80px;
+          background: linear-gradient(135deg, #8427E0, #a855f7);
+          color: white;
+          font-size: 32px;
+          font-weight: 700;
+          border: 4px solid #ffffff;
+          box-shadow: 0 8px 24px rgba(132, 39, 224, 0.3);
+        }
+      }
+
+      .appflowy-student-info-section {
+        flex: 1;
+
+        .appflowy-student-name-container {
+          margin-bottom: 24px;
+
+          .appflowy-student-profile-name {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 0 0 8px 0;
+            background: linear-gradient(135deg, #1e293b, #475569);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+          }
+
+          .appflowy-student-profile-year {
+            font-size: 18px;
+            color: #64748b;
+            font-weight: 600;
+            background: #e2e8f0;
+            padding: 6px 16px;
+            border-radius: 20px;
+            display: inline-block;
+          }
+        }
+
+        .appflowy-student-stats-grid {
+          display: flex;
+          gap: 20px;
+
+          .appflowy-stat-card {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1.5px solid rgba(132, 39, 224, 0.1);
+            border-radius: 16px;
+            padding: 16px 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            transition: all 0.2s ease;
+
+            &:hover {
+              transform: translateY(-2px);
+              box-shadow: 0 4px 16px rgba(132, 39, 224, 0.15);
+              border-color: rgba(132, 39, 224, 0.2);
+            }
+
+            .appflowy-stat-icon {
+              font-size: 24px;
+              margin-right: 12px;
+            }
+
+            .appflowy-stat-content {
+              display: flex;
+              flex-direction: column;
+
+              .appflowy-stat-label {
+                font-size: 12px;
+                font-weight: 600;
+                color: #64748b;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                margin-bottom: 4px;
+              }
+
+              .appflowy-stat-value {
+                font-size: 20px;
+                font-weight: 700;
+                background: linear-gradient(135deg, #8427E0, #a855f7);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+              }
+            }
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+
+        .performance-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          background: #ffffff;
+          border: 1.5px solid #e2e8f0;
+          border-radius: 12px;
+          padding: 20px;
+          transition: all 0.2s ease;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+          &:hover {
+            border-color: #8427E0;
+            box-shadow: 0 4px 16px rgba(132, 39, 224, 0.1);
+            transform: translateY(-1px);
+          }
+
+          .performance-info {
+            display: flex;
+            flex-direction: column;
+
+            .performance-subject {
+              font-size: 16px;
+              font-weight: 600;
+              color: #1e293b;
+              margin-bottom: 6px;
+            }
+
+            .performance-assignment {
+              font-size: 14px;
+              color: #64748b;
+              font-weight: 500;
+            }
+          }
+
+          .performance-grade {
+            font-size: 18px;
+            font-weight: 700;
+            padding: 8px 16px;
+            border-radius: 8px;
+            min-width: 56px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+            &.grade-a {
+              background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+              color: #166534;
+              border: 1px solid #86efac;
+            }
+
+            &.grade-aplus {
+              background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+              color: #166534;
+              border: 1px solid #86efac;
+            }
+
+            &.grade-aminus {
+              background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+              color: #166534;
+              border: 1px solid #86efac;
+            }
+
+            &.grade-bplus {
+              background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+              color: #1e40af;
+              border: 1px solid #93c5fd;
+            }
+
+            &.grade-b {
+              background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+              color: #1e40af;
+              border: 1px solid #93c5fd;
+            }
+
+            &.grade-bminus {
+              background: linear-gradient(135deg, #fef3c7, #fde68a);
+              color: #92400e;
+              border: 1px solid #fcd34d;
+            }
+          }
+        }
+      }
+    }
+
+    .ai-summary-section {
+      margin-bottom: 28px;
+
+      .ai-summary-content {
+        background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+        border: 1.5px solid #bae6fd;
+        border-radius: 16px;
+        padding: 24px;
+        position: relative;
+        
+        &::before {
+          content: '';
+          position: absolute;
+          top: -1px;
+          left: -1px;
+          right: -1px;
+          bottom: -1px;
+          background: linear-gradient(135deg, #0ea5e9, #3b82f6);
+          border-radius: 16px;
+          z-index: -1;
+          opacity: 0.1;
+        }
+        
+        p {
+          font-size: 15px;
+          line-height: 1.7;
+          color: #1e293b;
+          margin: 0;
+          font-weight: 500;
+        }
+      }
+    }
+
+    .teacher-comments-section {
+      .teacher-comments-input {
+        width: 100%;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 20px;
+        font-size: 14px;
+        line-height: 1.6;
+        resize: vertical;
+        min-height: 120px;
+        transition: all 0.2s ease;
+        font-family: inherit;
+        background: #ffffff;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+        &:focus {
+          outline: none;
+          border-color: #8427E0;
+          box-shadow: 0 0 0 3px rgba(132, 39, 224, 0.1), 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        &:hover {
+          border-color: #cbd5e1;
+        }
+
+        &::placeholder {
+          color: #64748b;
+          font-weight: 400;
+        }
+      }
+
+      .comments-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 16px;
+
+        .save-comments-btn {
+          background: linear-gradient(135deg, #8427E0, #a855f7);
+          color: white;
+          border: none;
+          font-weight: 600;
+          border-radius: 10px;
+          padding: 14px 28px;
+          font-size: 14px;
+          transition: all 0.2s ease;
+          box-shadow: 0 3px 8px rgba(132, 39, 224, 0.25);
+
+          &:hover:not(:disabled) {
+            background: linear-gradient(135deg, #7c3aed, #9333ea);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(132, 39, 224, 0.35);
+          }
+
+          &:active:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(132, 39, 224, 0.3);
+          }
+
+          &:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+          }
+        }
+      }
+    }
+  }
+}
+
+// AppFlowy Search Dropdown Styles
+.search-container {
+  position: relative;
+  width: 320px;
+
+  .search-input {
+    width: 100%;
+    height: 40px;
+    padding: 0 16px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    background: #ffffff;
+    color: #1e293b;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+    &::placeholder {
+      color: #64748b;
+      font-weight: 400;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: #8427E0;
+      box-shadow: 0 0 0 3px rgba(132, 39, 224, 0.1), 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    &:hover {
+      border-color: #cbd5e1;
+    }
+  }
+
+  .appflowy-search-results {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    z-index: 1000;
+    max-height: 320px;
+    overflow-y: auto;
+    padding: 8px;
+    animation: searchDropdownSlideIn 0.2s ease-out;
+
+    .appflowy-search-result-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      border: 1px solid transparent;
+      margin-bottom: 4px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      &:hover {
+        background: #f8fafc;
+        border-color: #e2e8f0;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+
+      &:active {
+        transform: translateY(0);
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .appflowy-student-avatar {
+        width: 36px;
+        height: 36px;
+        margin-right: 12px;
+        background: linear-gradient(135deg, #8427E0, #a855f7);
+        color: white;
+        font-size: 13px;
+        font-weight: 600;
+        border: 2px solid #ffffff;
+        box-shadow: 0 2px 8px rgba(132, 39, 224, 0.2);
+      }
+
+      .appflowy-student-info {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+
+        .appflowy-student-name {
+          font-size: 15px;
+          font-weight: 600;
+          color: #1e293b;
+          margin-bottom: 2px;
+          line-height: 1.2;
+        }
+
+        .appflowy-student-year {
+          font-size: 13px;
+          color: #64748b;
+          font-weight: 500;
+        }
+      }
+    }
+  }
+
+  @keyframes searchDropdownSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-8px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+}
+
+// Dark mode support for student search and profile
+.dark {
+  .search-container {
+    .search-input {
+      background: #1e293b;
+      border-color: #334155;
+      color: white;
+      
+      &::placeholder {
+        color: #94a3b8;
+      }
+      
+      &:focus {
+        border-color: #a855f7;
+        box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
+      }
+    }
+
+    .appflowy-search-results {
+      background: #1e293b;
+      border-color: #334155;
+
+      .appflowy-search-result-item {
+        border-color: #334155;
+
+        &:hover {
+          background: #334155;
+        }
+
+        .appflowy-student-info {
+          .appflowy-student-name {
+            color: white;
+          }
+
+          .appflowy-student-year {
+            color: #94a3b8;
+          }
+        }
+      }
+    }
+  }
+
+  .student-profile-popup {
+    .student-profile-content {
+      .student-basic-info {
+        background: #334155;
+        border-color: #475569;
+
+        .student-details {
+          .student-profile-name {
+            color: white;
+          }
+
+          .student-profile-year {
+            color: #94a3b8;
+          }
+
+          .student-stats {
+            .stat-item {
+              .stat-label {
+                color: #94a3b8;
+              }
+
+              .stat-value {
+                color: #a855f7;
+              }
+            }
+          }
+        }
+      }
+
+      .section-title {
+        color: white;
+      }
+
+      .student-performance-section {
+        .performance-list {
+          .performance-item {
+            background: #1e293b;
+            border-color: #334155;
+
+            .performance-info {
+              .performance-subject {
+                color: white;
+              }
+
+              .performance-assignment {
+                color: #94a3b8;
+              }
+            }
+          }
+        }
+      }
+
+      .ai-summary-section {
+        .ai-summary-content {
+          background: #1e3a8a;
+          border-color: #3b82f6;
+          
+          p {
+            color: white;
+          }
+        }
+      }
+
+      .teacher-comments-section {
+        .teacher-comments-input {
+          background: #1e293b;
+          border-color: #334155;
+          color: white;
+
+          &:focus {
+            border-color: #a855f7;
+            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
+          }
+
+          &::placeholder {
+            color: #94a3b8;
+          }
+        }
+      }
+    }
+  }
+}
