@@ -10,8 +10,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import '@/styles/dashboard.scss';
 
-type DashboardView = 'home' | 'reports' | 'ai-monitoring' | 'ai-assistant' | 'notifications' | 'alerts' | 'settings';
-type AccountType = 'teacher' | 'student';
+type DashboardView = 'home' | 'reports' | 'ai-monitoring' | 'ai-assistant' | 'notifications' | 'alerts' | 'settings' | 'classes' | 'assignments' | 'grades' | 'parent-assignments' | 'parent-grades' | 'parent-reports' | 'parent-notifications';
+type AccountType = 'teacher' | 'student' | 'parent';
 
 export default function DashboardPage() {
   const { session, isAuthenticated, status, signOut, isLoading } = useAuth();
@@ -65,6 +65,14 @@ export default function DashboardPage() {
     { id: 'notifications', label: 'Notifications', icon: '🔔' },
   ];
 
+  const parentNavItems: Array<{ id: string; label: string; icon: string }> = [
+    { id: 'home', label: 'Home Base', icon: '🏠' },
+    { id: 'parent-assignments', label: 'Assignments', icon: '📝' },
+    { id: 'parent-grades', label: 'Grades', icon: '📊' },
+    { id: 'parent-reports', label: 'Reports', icon: '📋' },
+    { id: 'parent-notifications', label: 'Notifications', icon: '🔔' },
+  ];
+
   // Close popup when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -81,7 +89,16 @@ export default function DashboardPage() {
 
   // Filter navigation items based on account type
   const getFilteredNavItems = () => {
-    return accountType === 'teacher' ? teacherNavItems : studentNavItems;
+    switch (accountType) {
+      case 'teacher':
+        return teacherNavItems;
+      case 'student':
+        return studentNavItems;
+      case 'parent':
+        return parentNavItems;
+      default:
+        return teacherNavItems;
+    }
   };
 
   const handleAccountSwitch = (newAccountType: AccountType) => {
@@ -120,15 +137,15 @@ export default function DashboardPage() {
               <Avatar className="user-avatar">
                 <AvatarImage src={session?.user?.image || ''} alt={session?.user?.name || ''} />
                 <AvatarFallback className="text-sm">
-                  {accountType === 'teacher' ? 'T' : 'S'}
+                  {accountType === 'teacher' ? 'T' : accountType === 'student' ? 'S' : 'P'}
                 </AvatarFallback>
               </Avatar>
               <div className="user-details">
                 <span className="user-name">
-                  {accountType === 'teacher' ? 'Mr. Johnson' : 'Alex Smith'}
+                  {accountType === 'teacher' ? 'Mr. Johnson' : accountType === 'student' ? 'Alex Smith' : 'Alice Smith'}
                 </span>
                 <span className="user-role">
-                  {accountType === 'teacher' ? 'Teacher' : 'Student'}
+                  {accountType === 'teacher' ? 'Teacher' : accountType === 'student' ? 'Student' : 'Parent'}
                 </span>
               </div>
               <button className={`dropdown-arrow ${showAccountPopup ? 'open' : ''}`}>▼</button>
@@ -171,18 +188,33 @@ export default function DashboardPage() {
                     </div>
                     {accountType === 'student' && <span className="check-icon">✓</span>}
                   </button>
+                  
+                  <button 
+                    className={`account-option ${accountType === 'parent' ? 'active' : ''}`}
+                    onClick={() => handleAccountSwitch('parent')}
+                  >
+                    <div className="account-info">
+                      <Avatar className="account-avatar">
+                        <AvatarFallback>P</AvatarFallback>
+                      </Avatar>
+                      <div className="account-details">
+                        <span className="account-name">Alice Smith</span>
+                        <span className="account-type">Parent</span>
+                      </div>
+                    </div>
+                    {accountType === 'parent' && <span className="check-icon">✓</span>}
+                  </button>
                 </div>
               </div>
             )}
           </div>
-                      <Button 
-              onClick={() => router.push('/login')}
-              disabled={isLoading}
-              variant="outline"
-              className="sign-out-btn"
-            >
-              Sign Out
-            </Button>
+          <Button 
+            onClick={() => router.push('/login')}
+            disabled={isLoading}
+            className="sign-out-btn"
+          >
+            Sign Out
+          </Button>
         </div>
       </aside>
 
@@ -198,7 +230,7 @@ export default function DashboardPage() {
             {activeView === 'alerts' && <AlertsView />}
             {activeView === 'settings' && <SettingsView />}
           </>
-        ) : (
+        ) : accountType === 'student' ? (
           <>
             {activeView === 'home' && <StudentHomeBase />}
             {activeView === 'classes' && <div className="coming-soon">Classes - Coming Soon</div>}
@@ -207,6 +239,155 @@ export default function DashboardPage() {
             {activeView === 'reports' && <div className="coming-soon">Reports - Coming Soon</div>}
             {activeView === 'ai-assistant' && <div className="coming-soon">AI Assistant - Coming Soon</div>}
             {activeView === 'notifications' && <div className="coming-soon">Notifications - Coming Soon</div>}
+          </>
+        ) : (
+          // Parent account
+          <>
+            {activeView === 'home' && (
+              <div className="home-base parent-home-base">
+                {/* Header */}
+                <div className="dashboard-header">
+                  <h1 className="page-title">Home Base</h1>
+                  <div className="header-actions">
+                    <Button className="contact-teacher-btn">Contact Teacher</Button>
+                  </div>
+                </div>
+
+                {/* Metrics Cards */}
+                <div className="metrics-grid">
+                  <MetricCard title="Attendance Rate" value="96.2%" change="+2.1% this month" type="line" />
+                  <MetricCard title="Current GPA" value="3.8" change="+0.2 this semester" type="bar" />
+                  <MetricCard title="Credits Earned" value="22/24" change="On track for graduation" type="progress" />
+                  <MetricCard title="Assignments Due" value="3" change="This week" type="progress" />
+                </div>
+
+                <div className="dashboard-content">
+                  <div className="main-content">
+                    {/* Recent Grades */}
+                    <Card className="grades-card">
+                      <CardHeader>
+                        <CardTitle>Recent Grades</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="grades-list">
+                          <div className="grade-item">
+                            <div className="grade-subjects">
+                              <span className="subject-name">Biology</span>
+                              <span className="subject-topic">Cell Structure & Function</span>
+                            </div>
+                            <div className="grade-score">A</div>
+                          </div>
+                          <div className="grade-item">
+                            <div className="grade-subjects">
+                              <span className="subject-name">Math</span>
+                              <span className="subject-topic">Algebra II</span>
+                            </div>
+                            <div className="grade-score">B+</div>
+                          </div>
+                          <div className="grade-item">
+                            <div className="grade-subjects">
+                              <span className="subject-name">English</span>
+                              <span className="subject-topic">Literature Analysis</span>
+                            </div>
+                            <div className="grade-score">A-</div>
+                          </div>
+                          <div className="grade-item">
+                            <div className="grade-subjects">
+                              <span className="subject-name">History</span>
+                              <span className="subject-topic">World History</span>
+                            </div>
+                            <div className="grade-score">B</div>
+                          </div>
+                          <div className="grade-item">
+                            <div className="grade-subjects">
+                              <span className="subject-name">Spanish</span>
+                              <span className="subject-topic">Advanced Spanish</span>
+                            </div>
+                            <div className="grade-score">A</div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* Progress Card */}
+                    <Card className="progress-card">
+                      <CardHeader>
+                        <CardTitle>Progress Toward Graduation</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="progress-section">
+                          <div className="progress-bar">
+                            <div className="progress-fill" style={{ width: '92%' }}></div>
+                          </div>
+                          <div className="progress-stats">
+                            <div className="progress-percentage">92% Complete</div>
+                            <div className="progress-credits">22 of 24 credits earned</div>
+                          </div>
+                        </div>
+                        <div className="graduation-info">
+                          <div className="graduation-date"><strong>Expected Graduation:</strong> June 2025</div>
+                          <div className="graduation-status">On track for early graduation</div>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* Teacher's Note Card */}
+                    <Card className="teacher-note-card">
+                      <CardHeader>
+                        <CardTitle>Teacher's Note</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="teacher-note">
+                          <div className="note-content">
+                            Alex has shown great improvement in participation this semester.<br />
+                            His lab work is excellent, and he's been more engaged in class discussions.<br />
+                            Please remind him to submit his English essay on time.
+                          </div>
+                          <div className="note-meta">
+                            <span className="teacher-name">- Mr. Johnson</span>
+                            <span className="note-date">2 days ago</span>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  <div className="sidebar-content">
+                    {/* Upcoming Assignments */}
+                    <Card className="assignments-card">
+                      <CardHeader>
+                        <CardTitle>Upcoming Assignments</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="assignment-list">
+                          <AssignmentItem title="Biology Lab Report" due="Due Friday" status="UPCOMING" />
+                          <AssignmentItem title="Math Quiz" due="Due Monday" status="UPCOMING" />
+                          <AssignmentItem title="English Essay" due="Due Next Wednesday" status="UPCOMING" />
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* Recent Activity (Sidebar) */}
+                    <Card className="sidebar-activity-card">
+                      <CardHeader>
+                        <CardTitle>Recent Activity</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="sidebar-activity-list">
+                          <ActivityItem user="Alex Smith" action="completed assignment" item="Biology Lab Report" time="1 day ago" />
+                          <ActivityItem user="Alex Smith" action="scored A in" item="Biology" time="2 days ago" />
+                          <ActivityItem user="Alex Smith" action="submitted essay" item="English" time="3 days ago" />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+              </div>
+            )}
+            {activeView === 'parent-assignments' && <div className="coming-soon">Parent Assignments - Coming Soon</div>}
+            {activeView === 'parent-grades' && <div className="coming-soon">Parent Grades - Coming Soon</div>}
+            {activeView === 'parent-reports' && <div className="coming-soon">Parent Reports - Coming Soon</div>}
+            {activeView === 'parent-notifications' && <div className="coming-soon">Parent Notifications - Coming Soon</div>}
           </>
         )}
       </main>
@@ -1111,6 +1292,12 @@ function AIMonitoringView() {
     description: string;
     status: 'running' | 'stopped';
   }>>([]);
+  const [alerts, setAlerts] = useState<Array<{
+    id: string;
+    message: string;
+    severity: 'info' | 'warning' | 'critical';
+    timestamp: Date;
+  }>>([]);
   const [newAgent, setNewAgent] = useState({
     name: '',
     description: ''
@@ -1127,6 +1314,26 @@ function AIMonitoringView() {
       setAgents([...agents, agent]);
       setNewAgent({ name: '', description: '' });
       setShowAddAgentPopup(false);
+
+      // Create initial alert
+      const initialAlert = {
+        id: Date.now().toString(),
+        message: 'Checking Grade...',
+        severity: 'info' as const,
+        timestamp: new Date()
+      };
+      setAlerts([initialAlert, ...alerts]);
+
+      // Update alert after 3 seconds
+      setTimeout(() => {
+        setAlerts(prevAlerts => 
+          prevAlerts.map(alert => 
+            alert.id === initialAlert.id 
+              ? { ...alert, message: '0 Students found having a grade below 80' }
+              : alert
+          )
+        );
+      }, 3000);
     }
   };
 
@@ -1158,7 +1365,7 @@ function AIMonitoringView() {
           <div className="stat-label">Active Agents</div>
         </div>
         <div className="stat-card">
-          <div className="stat-value">0</div>
+          <div className="stat-value">{alerts.length}</div>
           <div className="stat-label">Alerts Today</div>
         </div>
         <div className="stat-card">
@@ -1202,10 +1409,28 @@ function AIMonitoringView() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="empty-alerts">
-            <div className="empty-icon">🔔</div>
-            <div className="empty-message">No alerts yet. Your agents will display notifications here.</div>
-          </div>
+          {alerts.length === 0 ? (
+            <div className="empty-alerts">
+              <div className="empty-icon">🔔</div>
+              <div className="empty-message">No alerts yet. Your agents will display notifications here.</div>
+            </div>
+          ) : (
+            <div className="alerts-list">
+              {alerts.map((alert) => (
+                <div key={alert.id} className={`alert-item ${alert.severity}`}>
+                  <div className="alert-content">
+                    <div className="alert-message">{alert.message}</div>
+                    <div className="alert-time">
+                      {alert.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </div>
+                  </div>
+                  <div className={`alert-severity ${alert.severity}`}>
+                    {alert.severity.charAt(0).toUpperCase() + alert.severity.slice(1)}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -1287,6 +1512,20 @@ function AIMonitoringView() {
 function AIAssistantView() {
   const [message, setMessage] = useState('');
   const [selectedCapability, setSelectedCapability] = useState('');
+  const [showAttendanceReport, setShowAttendanceReport] = useState(false);
+  const [chatMessages, setChatMessages] = useState<Array<{
+    id: string;
+    content: string;
+    isUser: boolean;
+    timestamp: Date;
+  }>>([
+    {
+      id: '1',
+      content: 'Welcome to Polaris AI Assistant! I\'m here to help you with educational analytics, student insights, curriculum planning, and much more. How can I assist you today?',
+      isUser: false,
+      timestamp: new Date()
+    }
+  ]);
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
@@ -1301,6 +1540,27 @@ function AIAssistantView() {
       e.preventDefault();
       handleSendMessage(e);
     }
+  };
+
+  const handleAttendanceTrends = () => {
+    // Add user message
+    const userMessage = {
+      id: Date.now().toString(),
+      content: 'Show me attendance trends',
+      isUser: true,
+      timestamp: new Date()
+    };
+    
+    // Add AI response
+    const aiMessage = {
+      id: (Date.now() + 1).toString(),
+      content: 'I\'ll generate an attendance trends report for you. Let me analyze the data...',
+      isUser: false,
+      timestamp: new Date()
+    };
+    
+    setChatMessages(prev => [...prev, userMessage, aiMessage]);
+    setShowAttendanceReport(true);
   };
 
   return (
@@ -1366,18 +1626,120 @@ function AIAssistantView() {
           </div>
 
           <div className="chat-messages">
-            <div className="welcome-message">
-              <div className="message-content">
-                Welcome to Polaris AI Assistant! I'm here to help you with educational analytics, student insights, curriculum planning, and much more. How can I assist you today?
+            {chatMessages.map((msg) => (
+              <div key={msg.id} className={`message ${msg.isUser ? 'user-message' : 'ai-message'}`}>
+                <div className="message-content">
+                  {msg.content}
+                </div>
+                <div className="message-time">
+                  {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </div>
               </div>
-              <div className="message-time">Just now</div>
-            </div>
+            ))}
+            
+            {showAttendanceReport && (
+              <div className="attendance-report">
+                <div className="report-header">
+                  <h3>📊 Attendance Trends Report</h3>
+                  <span className="report-date">Generated on {new Date().toLocaleDateString()}</span>
+                </div>
+                
+                <div className="report-section">
+                  <h4>📈 Overall Attendance Summary</h4>
+                  <div className="stats-grid">
+                    <div className="stat-item">
+                      <div className="stat-value">94.2%</div>
+                      <div className="stat-label">Average Attendance</div>
+                    </div>
+                    <div className="stat-item">
+                      <div className="stat-value">127</div>
+                      <div className="stat-label">Total Students</div>
+                    </div>
+                    <div className="stat-item">
+                      <div className="stat-value">+2.1%</div>
+                      <div className="stat-label">vs Last Month</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="report-section">
+                  <h4>📅 Monthly Attendance Breakdown</h4>
+                  <div className="attendance-chart">
+                    <div className="chart-bar" style={{ height: '85%' }}>
+                      <span className="bar-label">Sep</span>
+                      <span className="bar-value">92.1%</span>
+                    </div>
+                    <div className="chart-bar" style={{ height: '88%' }}>
+                      <span className="bar-label">Oct</span>
+                      <span className="bar-value">93.5%</span>
+                    </div>
+                    <div className="chart-bar" style={{ height: '91%' }}>
+                      <span className="bar-label">Nov</span>
+                      <span className="bar-value">94.2%</span>
+                    </div>
+                    <div className="chart-bar" style={{ height: '89%' }}>
+                      <span className="bar-label">Dec</span>
+                      <span className="bar-value">95.8%</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="report-section">
+                  <h4>🎯 Class Performance</h4>
+                  <div className="class-attendance">
+                    <div className="class-item">
+                      <span className="class-name">Biology 1 - 1st Period</span>
+                      <span className="class-attendance-rate">96.3%</span>
+                    </div>
+                    <div className="class-item">
+                      <span className="class-name">AP Biology - 2nd Period</span>
+                      <span className="class-attendance-rate">94.7%</span>
+                    </div>
+                    <div className="class-item">
+                      <span className="class-name">Biology 2 - 3rd Period</span>
+                      <span className="class-attendance-rate">91.2%</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="report-section">
+                  <h4>⚠️ Students Requiring Attention</h4>
+                  <div className="attention-list">
+                    <div className="attention-item">
+                      <span className="student-name">Emma Smith</span>
+                      <span className="attendance-rate">78%</span>
+                      <span className="trend">↓ 12%</span>
+                    </div>
+                    <div className="attention-item">
+                      <span className="student-name">Michael Johnson</span>
+                      <span className="attendance-rate">82%</span>
+                      <span className="trend">↓ 8%</span>
+                    </div>
+                    <div className="attention-item">
+                      <span className="student-name">Sarah Davis</span>
+                      <span className="attendance-rate">85%</span>
+                      <span className="trend">↓ 5%</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="report-footer">
+                  <p><strong>Key Insights:</strong></p>
+                  <ul>
+                    <li>Overall attendance has improved by 2.1% compared to last month</li>
+                    <li>Biology 1 shows the highest attendance rate at 96.3%</li>
+                    <li>3 students require immediate attention due to declining attendance</li>
+                    <li>December shows the highest monthly attendance at 95.8%</li>
+                  </ul>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="example-queries">
             <div className="queries-title">Try asking me about:</div>
             <div className="queries-grid">
-              <QueryButton icon="👤" text="Attendance Trends" />
+              <QueryButton icon="👤" text="Attendance Trends" onClick={handleAttendanceTrends} />
               <QueryButton icon="📈" text="Performance Report" />
               <QueryButton icon="⭐" text="Best Practices" />
               <QueryButton icon="⚠️" text="AI-Risk Students" />
@@ -1874,9 +2236,9 @@ function CapabilityCard({
   );
 }
 
-function QueryButton({ icon, text }: { icon: string; text: string }) {
+function QueryButton({ icon, text, onClick }: { icon: string; text: string; onClick?: () => void }) {
   return (
-    <button className="query-button">
+    <button className="query-button" onClick={onClick}>
       <span className="query-icon">{icon}</span>
       <span className="query-text">{text}</span>
     </button>
