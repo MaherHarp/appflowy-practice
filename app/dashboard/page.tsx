@@ -288,103 +288,155 @@ export default function DashboardPage() {
                 <div className="dashboard-header">
                   <h1 className="page-title">Home Base</h1>
                   <div className="header-actions">
+                    <Input 
+                      placeholder="Search Alex's progress..." 
+                      className="search-input"
+                    />
                     <Button className="contact-teacher-btn">Contact Teacher</Button>
                   </div>
                 </div>
 
                 {/* Metrics Cards */}
-                <div className="metrics-grid">
-                  <MetricCard title="Attendance Rate" value="96.2%" change="+2.1% this month" type="line" />
-                  <MetricCard title="Current GPA" value="3.8" change="+0.2 this semester" type="bar" />
-                  <MetricCard title="Credits Earned" value="22/24" change="On track for graduation" type="progress" />
-                  <MetricCard title="Assignments Due" value="3" change="This week" type="progress" />
-                </div>
+                <animated.div className="metrics-grid">
+                  <MetricCard 
+                    title="Attendance Rate" 
+                    value="96.2%" 
+                    change="+2.1% this month"
+                    type="line"
+                  />
+                  <MetricCard 
+                    title="Current GPA" 
+                    value="3.8" 
+                    change="+0.2 this semester"
+                    type="bar"
+                  />
+                  <MetricCard 
+                    title="Credits Earned" 
+                    value="22/24" 
+                    change="On track for graduation"
+                    type="progress"
+                  />
+                  <MetricCard 
+                    title="Assignments Due" 
+                    value="3" 
+                    change="This week"
+                    type="progress"
+                  />
+                </animated.div>
 
                 <div className="dashboard-content">
                   <div className="main-content">
                     {/* Recent Grades */}
-                    <Card className="grades-card">
+                    <Card className="parent-grades-card">
                       <CardHeader>
-                        <CardTitle>Recent Grades</CardTitle>
+                        <CardTitle>📊 Alex's Recent Grades</CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <div className="grades-list">
-                          <div className="grade-item">
-                            <div className="grade-subjects">
-                              <span className="subject-name">Biology</span>
+                        <div className="parent-grades-list">
+                          <div className="parent-grade-item">
+                            <div className="grade-info">
+                              <div className="subject-header">
+                                <span className="subject-name">Biology</span>
+                                <span className="grade-badge grade-a">A</span>
+                              </div>
                               <span className="subject-topic">Cell Structure & Function</span>
                             </div>
-                            <div className="grade-score">A</div>
                           </div>
-                          <div className="grade-item">
-                            <div className="grade-subjects">
-                              <span className="subject-name">Math</span>
-                              <span className="subject-topic">Algebra II</span>
+                          <div className="parent-grade-item">
+                            <div className="grade-info">
+                              <div className="subject-header">
+                                <span className="subject-name">Mathematics</span>
+                                <span className="grade-badge grade-b">B+</span>
+                              </div>
+                              <span className="subject-topic">Algebra II - Quadratic Functions</span>
                             </div>
-                            <div className="grade-score">B+</div>
                           </div>
-                          <div className="grade-item">
-                            <div className="grade-subjects">
-                              <span className="subject-name">English</span>
-                              <span className="subject-topic">Literature Analysis</span>
+                          <div className="parent-grade-item">
+                            <div className="grade-info">
+                              <div className="subject-header">
+                                <span className="subject-name">English Literature</span>
+                                <span className="grade-badge grade-a">A-</span>
+                              </div>
+                              <span className="subject-topic">Shakespeare Analysis</span>
                             </div>
-                            <div className="grade-score">A-</div>
                           </div>
-                          <div className="grade-item">
-                            <div className="grade-subjects">
-                              <span className="subject-name">History</span>
-                              <span className="subject-topic">World History</span>
+                          <div className="parent-grade-item">
+                            <div className="grade-info">
+                              <div className="subject-header">
+                                <span className="subject-name">World History</span>
+                                <span className="grade-badge grade-b">B</span>
+                              </div>
+                              <span className="subject-topic">Industrial Revolution</span>
                             </div>
-                            <div className="grade-score">B</div>
                           </div>
-                          <div className="grade-item">
-                            <div className="grade-subjects">
-                              <span className="subject-name">Spanish</span>
-                              <span className="subject-topic">Advanced Spanish</span>
+                          <div className="parent-grade-item">
+                            <div className="grade-info">
+                              <div className="subject-header">
+                                <span className="subject-name">Spanish</span>
+                                <span className="grade-badge grade-a">A</span>
+                              </div>
+                              <span className="subject-topic">Advanced Conversation</span>
                             </div>
-                            <div className="grade-score">A</div>
                           </div>
                         </div>
                       </CardContent>
                     </Card>
 
                     {/* Progress Card */}
-                    <Card className="progress-card">
+                    <Card className="parent-progress-card">
                       <CardHeader>
-                        <CardTitle>Progress Toward Graduation</CardTitle>
+                        <CardTitle>🎓 Academic Progress</CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <div className="progress-section">
-                          <div className="progress-bar">
-                            <div className="progress-fill" style={{ width: '92%' }}></div>
+                        <div className="progress-overview">
+                          <div className="progress-visual">
+                            <div className="progress-circle">
+                              <div className="progress-inner">
+                                <span className="progress-percent">92%</span>
+                                <span className="progress-label">Complete</span>
+                              </div>
+                            </div>
                           </div>
-                          <div className="progress-stats">
-                            <div className="progress-percentage">92% Complete</div>
-                            <div className="progress-credits">22 of 24 credits earned</div>
+                          <div className="progress-details">
+                            <div className="progress-stat">
+                              <span className="stat-label">Credits Earned</span>
+                              <span className="stat-value">22 of 24</span>
+                            </div>
+                            <div className="progress-stat">
+                              <span className="stat-label">Expected Graduation</span>
+                              <span className="stat-value">June 2025</span>
+                            </div>
+                            <div className="progress-stat">
+                              <span className="stat-label">Track Status</span>
+                              <span className="stat-value success">On Track for Early Graduation</span>
+                            </div>
                           </div>
-                        </div>
-                        <div className="graduation-info">
-                          <div className="graduation-date"><strong>Expected Graduation:</strong> June 2025</div>
-                          <div className="graduation-status">On track for early graduation</div>
                         </div>
                       </CardContent>
                     </Card>
 
                     {/* Teacher's Note Card */}
-                    <Card className="teacher-note-card">
+                    <Card className="parent-teacher-note-card">
                       <CardHeader>
-                        <CardTitle>Teacher's Note</CardTitle>
+                        <CardTitle>💬 Latest Teacher Feedback</CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <div className="teacher-note">
-                          <div className="note-content">
-                            Alex has shown great improvement in participation this semester.<br />
-                            His lab work is excellent, and he's been more engaged in class discussions.<br />
-                            Please remind him to submit his English essay on time.
+                        <div className="teacher-feedback">
+                          <div className="feedback-content">
+                            <p>Alex has shown tremendous improvement in class participation this semester. His analytical thinking in Biology lab work has been exceptional, and he's become much more engaged in group discussions.</p>
+                            <p>Please encourage him to maintain this momentum, especially with the upcoming English essay deadline.</p>
                           </div>
-                          <div className="note-meta">
-                            <span className="teacher-name">- Mr. Johnson</span>
-                            <span className="note-date">2 days ago</span>
+                          <div className="feedback-footer">
+                            <div className="teacher-info">
+                              <Avatar className="teacher-avatar">
+                                <AvatarFallback>MJ</AvatarFallback>
+                              </Avatar>
+                              <div>
+                                <span className="teacher-name">Mr. Johnson</span>
+                                <span className="teacher-role">Biology Teacher</span>
+                              </div>
+                            </div>
+                            <span className="feedback-date">2 days ago</span>
                           </div>
                         </div>
                       </CardContent>
@@ -393,29 +445,68 @@ export default function DashboardPage() {
 
                   <div className="sidebar-content">
                     {/* Upcoming Assignments */}
-                    <Card className="assignments-card">
+                    <Card className="parent-assignments-card">
                       <CardHeader>
-                        <CardTitle>Upcoming Assignments</CardTitle>
+                        <CardTitle>📝 Upcoming Assignments</CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <div className="assignment-list">
-                          <AssignmentItem title="Biology Lab Report" due="Due Friday" status="UPCOMING" />
-                          <AssignmentItem title="Math Quiz" due="Due Monday" status="UPCOMING" />
-                          <AssignmentItem title="English Essay" due="Due Next Wednesday" status="UPCOMING" />
+                        <div className="parent-assignment-list">
+                          <div className="parent-assignment-item urgent">
+                            <div className="assignment-header">
+                              <span className="assignment-title">Biology Lab Report</span>
+                              <span className="due-badge due-soon">Due Friday</span>
+                            </div>
+                            <span className="assignment-description">Cell Division Experiment Analysis</span>
+                          </div>
+                          <div className="parent-assignment-item">
+                            <div className="assignment-header">
+                              <span className="assignment-title">Math Quiz</span>
+                              <span className="due-badge">Due Monday</span>
+                            </div>
+                            <span className="assignment-description">Chapter 5: Quadratic Functions</span>
+                          </div>
+                          <div className="parent-assignment-item">
+                            <div className="assignment-header">
+                              <span className="assignment-title">English Essay</span>
+                              <span className="due-badge">Due Next Wed</span>
+                            </div>
+                            <span className="assignment-description">Shakespeare Character Analysis</span>
+                          </div>
                         </div>
                       </CardContent>
                     </Card>
 
-                    {/* Recent Activity (Sidebar) */}
-                    <Card className="sidebar-activity-card">
+                    {/* Recent Activity */}
+                    <Card className="parent-activity-card">
                       <CardHeader>
-                        <CardTitle>Recent Activity</CardTitle>
+                        <CardTitle>🔔 Recent Activity</CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <div className="sidebar-activity-list">
-                          <ActivityItem user="Alex Smith" action="completed assignment" item="Biology Lab Report" time="1 day ago" />
-                          <ActivityItem user="Alex Smith" action="scored A in" item="Biology" time="2 days ago" />
-                          <ActivityItem user="Alex Smith" action="submitted essay" item="English" time="3 days ago" />
+                        <div className="parent-activity-list">
+                          <div className="parent-activity-item">
+                            <div className="activity-icon success">✓</div>
+                            <div className="activity-details">
+                              <span className="activity-text"><strong>Alex</strong> completed assignment</span>
+                              <span className="activity-subject">Biology Lab Report</span>
+                              <span className="activity-time">1 day ago</span>
+                            </div>
+                          </div>
+                          <div className="parent-activity-item">
+                            <div className="activity-icon grade">A</div>
+                            <div className="activity-details">
+                              <span className="activity-text"><strong>Alex</strong> received grade</span>
+                              <span className="activity-subject">Biology Exam</span>
+                              <span className="activity-time">2 days ago</span>
+                            </div>
+                          </div>
+                          <div className="parent-activity-item">
+                            <div className="activity-icon submitted">📤</div>
+                            <div className="activity-details">
+                              <span className="activity-text"><strong>Alex</strong> submitted essay</span>
+                              <span className="activity-subject">English Literature</span>
+                              <span className="activity-time">3 days ago</span>
+                            </div>
+                          </div>
                         </div>
                       </CardContent>
                     </Card>

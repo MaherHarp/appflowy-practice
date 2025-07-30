@@ -6057,31 +6057,58 @@
 }
 
 .parent-home-base {
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
+  padding: 32px;
 
   .dashboard-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 24px;
+    margin-bottom: 32px;
+    
     .page-title {
-      font-size: 2rem;
+      font-size: 2.5rem;
       font-weight: 700;
       color: var(--color-text-primary);
+      margin: 0;
     }
+    
     .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      
+      .search-input {
+        width: 300px;
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 10px 16px;
+        font-size: 14px;
+        
+        &::placeholder {
+          color: #94a3b8;
+        }
+        
+        &:focus {
+          border-color: #8427E0;
+          box-shadow: 0 0 0 3px rgba(132, 39, 224, 0.1);
+        }
+      }
+      
       .contact-teacher-btn {
         background: #8427E0;
         color: white;
         border: none;
         font-weight: 600;
         border-radius: 8px;
-        padding: 10px 24px;
-        font-size: 1rem;
+        padding: 12px 24px;
+        font-size: 14px;
+        transition: all 0.2s ease;
+        
         &:hover {
           background: #7c3aed;
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(132, 39, 224, 0.3);
         }
       }
     }
@@ -6091,7 +6118,7 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 24px;
-    margin-bottom: 24px;
+    margin-bottom: 32px;
   }
 
   .dashboard-content {
@@ -6104,190 +6131,399 @@
       display: flex;
       flex-direction: column;
       gap: 24px;
-
-      .grades-card, .progress-card, .teacher-note-card {
-        background: white;
-        border: 1px solid var(--color-border);
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-        padding: 0;
-        .grades-list {
-          display: flex;
-          flex-direction: column;
-          gap: 0;
-          .grade-item {
-            display: grid;
-            grid-template-columns: 2fr 2fr 1fr;
-            align-items: center;
-            padding: 10px 24px;
-            border-bottom: 1px solid #f1f5f9;
-            transition: background 0.15s;
-            &:last-child { border-bottom: none; }
-            &:hover { background: #f8fafc; }
-            .grade-subjects {
-              display: flex;
-              flex-direction: column;
-              .subject-name {
-                font-weight: 600;
-                color: var(--color-text-primary);
-                font-size: 1rem;
-                margin-bottom: 2px;
-              }
-              .subject-topic {
-                font-size: 0.95rem;
-                color: var(--color-text-secondary);
-              }
-            }
-            .grade-score {
-              font-weight: 700;
-              font-size: 1.1rem;
-              color: var(--color-primary);
-              min-width: 32px;
-              text-align: right;
-            }
-          }
-        }
-        .progress-section {
-          margin-bottom: 16px;
-          .progress-bar {
-            background: #f1f5f9;
-            border-radius: 8px;
-            height: 12px;
-            overflow: hidden;
-            margin-bottom: 12px;
-            .progress-fill {
-              background: linear-gradient(90deg, #8427E0 0%, #a855f7 100%);
-              height: 100%;
-              border-radius: 8px;
-              transition: width 0.4s ease;
-            }
-          }
-          .progress-stats {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            .progress-percentage {
-              font-weight: 600;
-              color: var(--color-text-primary);
-            }
-            .progress-credits {
-              font-size: 12px;
-              color: var(--color-text-secondary);
-            }
-          }
-        }
-        .graduation-info {
-          padding-top: 12px;
-          border-top: 1px solid #f1f5f9;
-          display: flex;
-          flex-direction: column;
-          gap: 4px;
-          .graduation-date {
-            font-weight: 600;
-            color: var(--color-primary);
-            margin-bottom: 0;
-          }
-          .graduation-status {
-            font-size: 13px;
-            color: #10b981;
-            font-weight: 600;
-          }
-        }
-        .teacher-note {
-          .note-content {
-            font-size: 1rem;
-            line-height: 1.7;
-            color: var(--color-text-primary);
-            margin-bottom: 16px;
-            font-style: italic;
-          }
-          .note-meta {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            font-size: 12px;
-            color: var(--color-text-secondary);
-            .teacher-name { font-weight: 500; margin-right: 8px; }
-          }
-        }
-      }
     }
 
     .sidebar-content {
       display: flex;
       flex-direction: column;
       gap: 24px;
-      .assignments-card, .sidebar-activity-card {
-        background: white;
-        border: 1px solid var(--color-border);
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-        padding: 0;
-        min-height: 220px;
-        .assignment-list {
-          .assignment-item {
+    }
+  }
+
+  // Enhanced Grades Card
+  .parent-grades-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+    
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .parent-grades-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+
+      .parent-grade-item {
+        padding: 20px 24px;
+        border-bottom: 1px solid #f1f5f9;
+        transition: background 0.15s ease;
+        
+        &:last-child {
+          border-bottom: none;
+        }
+        
+        &:hover {
+          background: #f8fafc;
+        }
+
+        .grade-info {
+          .subject-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid #f1f5f9;
-            &:last-child { border-bottom: none; }
-            .assignment-info {
-              .assignment-title {
-                font-weight: 600;
-                color: var(--color-text-primary);
-                margin-bottom: 4px;
+            margin-bottom: 8px;
+
+            .subject-name {
+              font-weight: 600;
+              color: var(--color-text-primary);
+              font-size: 1.1rem;
+            }
+
+            .grade-badge {
+              padding: 6px 12px;
+              border-radius: 20px;
+              font-weight: 700;
+              font-size: 14px;
+              
+              &.grade-a {
+                background: linear-gradient(135deg, #10b981, #059669);
+                color: white;
               }
-              .assignment-details {
-                font-size: 12px;
-                color: var(--color-text-secondary);
+              
+              &.grade-b {
+                background: linear-gradient(135deg, #3b82f6, #2563eb);
+                color: white;
+              }
+              
+              &.grade-c {
+                background: linear-gradient(135deg, #f59e0b, #d97706);
+                color: white;
               }
             }
-            .assignment-due {
+          }
+
+          .subject-topic {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            line-height: 1.4;
+          }
+        }
+      }
+    }
+  }
+
+  // Enhanced Progress Card
+  .parent-progress-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+    
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .progress-overview {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+
+      .progress-visual {
+        .progress-circle {
+          width: 120px;
+          height: 120px;
+          border-radius: 50%;
+          background: conic-gradient(#8427E0 0deg 331deg, #f1f5f9 331deg 360deg);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          position: relative;
+
+          .progress-inner {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            .progress-percent {
+              font-size: 24px;
+              font-weight: 700;
+              color: #8427E0;
+            }
+
+            .progress-label {
               font-size: 12px;
-              color: #f59e0b;
-              font-weight: 500;
+              color: var(--color-text-secondary);
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
             }
           }
         }
-        .sidebar-activity-list {
-          .activity-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 0;
-            border-bottom: 1px solid #f1f5f9;
-            &:last-child { border-bottom: none; }
-            .activity-avatar {
-              width: 32px;
-              height: 32px;
-              border-radius: 50%;
-              background: #8427E0;
-              color: white;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              font-weight: 700;
-              font-size: 1rem;
+      }
+
+      .progress-details {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+
+        .progress-stat {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+
+          .stat-label {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+          }
+
+          .stat-value {
+            font-weight: 600;
+            color: var(--color-text-primary);
+            
+            &.success {
+              color: #10b981;
             }
-            .activity-details {
-              .activity-user {
-                font-weight: 600;
-                color: var(--color-primary);
-              }
-              .activity-action {
-                color: var(--color-text-primary);
-                font-size: 14px;
-              }
-              .activity-item-title {
-                font-weight: 600;
-                color: var(--color-text-primary);
-              }
-              .activity-time {
-                font-size: 12px;
-                color: var(--color-text-secondary);
-              }
+          }
+        }
+      }
+    }
+  }
+
+  // Enhanced Teacher Note Card
+  .parent-teacher-note-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+    
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .teacher-feedback {
+      .feedback-content {
+        margin-bottom: 20px;
+        
+        p {
+          font-size: 15px;
+          line-height: 1.6;
+          color: var(--color-text-primary);
+          margin-bottom: 12px;
+          
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
+      }
+
+      .feedback-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 16px;
+        border-top: 1px solid #f1f5f9;
+
+        .teacher-info {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+
+          .teacher-avatar {
+            width: 40px;
+            height: 40px;
+            background: #8427E0;
+            color: white;
+          }
+
+          .teacher-name {
+            font-weight: 600;
+            color: var(--color-text-primary);
+            display: block;
+          }
+
+          .teacher-role {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+            display: block;
+          }
+        }
+
+        .feedback-date {
+          font-size: 12px;
+          color: var(--color-text-secondary);
+        }
+      }
+    }
+  }
+
+  // Enhanced Assignments Card
+  .parent-assignments-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+    
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .parent-assignment-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+
+      .parent-assignment-item {
+        padding: 18px 24px;
+        border-bottom: 1px solid #f1f5f9;
+        transition: background 0.15s ease;
+        
+        &:last-child {
+          border-bottom: none;
+        }
+        
+        &:hover {
+          background: #f8fafc;
+        }
+        
+        &.urgent {
+          background: rgba(239, 68, 68, 0.05);
+          border-left: 4px solid #ef4444;
+        }
+
+        .assignment-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 6px;
+
+          .assignment-title {
+            font-weight: 600;
+            color: var(--color-text-primary);
+            font-size: 15px;
+          }
+
+          .due-badge {
+            padding: 4px 8px;
+            background: #f1f5f9;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--color-text-secondary);
+            
+            &.due-soon {
+              background: #fef2f2;
+              color: #ef4444;
             }
+          }
+        }
+
+        .assignment-description {
+          font-size: 13px;
+          color: var(--color-text-secondary);
+          line-height: 1.4;
+        }
+      }
+    }
+  }
+
+  // Enhanced Activity Card
+  .parent-activity-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+    
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .parent-activity-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+
+      .parent-activity-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 18px 24px;
+        border-bottom: 1px solid #f1f5f9;
+        transition: background 0.15s ease;
+        
+        &:last-child {
+          border-bottom: none;
+        }
+        
+        &:hover {
+          background: #f8fafc;
+        }
+
+        .activity-icon {
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 700;
+          font-size: 14px;
+          flex-shrink: 0;
+          
+          &.success {
+            background: #10b981;
+            color: white;
+          }
+          
+          &.grade {
+            background: #3b82f6;
+            color: white;
+          }
+          
+          &.submitted {
+            background: #f59e0b;
+            color: white;
+          }
+        }
+
+        .activity-details {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+
+          .activity-text {
+            font-size: 14px;
+            color: var(--color-text-primary);
+            line-height: 1.4;
+          }
+
+          .activity-subject {
+            font-size: 13px;
+            color: var(--color-text-secondary);
+            font-style: italic;
+          }
+
+          .activity-time {
+            font-size: 12px;
+            color: var(--color-text-secondary);
           }
         }
       }
