@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
+import AcademicReportPopup from '../components/academic-report-popup';
 import '@/styles/dashboard.scss';
 
 type DashboardView = 'home' | 'reports' | 'ai-monitoring' | 'ai-assistant' | 'notifications' | 'alerts' | 'settings' | 'classes' | 'assignments' | 'grades' | 'parent-assignments' | 'parent-grades' | 'parent-reports' | 'parent-notifications';
@@ -271,12 +272,12 @@ export default function DashboardPage() {
         ) : accountType === 'student' ? (
           <>
             {activeView === 'home' && <StudentHomeBase />}
-            {activeView === 'classes' && <div className="coming-soon">Classes - Coming Soon</div>}
+            {activeView === 'classes' && <StudentClasses />}
             {activeView === 'assignments' && <StudentAssignments />}
-            {activeView === 'grades' && <div className="coming-soon">Grades - Coming Soon</div>}
-            {activeView === 'reports' && <div className="coming-soon">Reports - Coming Soon</div>}
-            {activeView === 'ai-assistant' && <div className="coming-soon">AI Assistant - Coming Soon</div>}
-            {activeView === 'notifications' && <div className="coming-soon">Notifications - Coming Soon</div>}
+            {activeView === 'grades' && <StudentGrades />}
+            {activeView === 'reports' && <StudentReports />}
+            {activeView === 'ai-assistant' && <AIAssistantView />}
+            {activeView === 'notifications' && <NotificationsView />}
           </>
         ) : (
           // Parent account
@@ -429,6 +430,686 @@ export default function DashboardPage() {
           </>
         )}
       </main>
+    </div>
+  );
+}
+
+// Student Classes Component
+function StudentClasses() {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [viewMode, setViewMode] = useState('Grid');
+  const [filterClass, setFilterClass] = useState('All Classes');
+
+  return (
+    <div className="student-classes">
+      <div className="classes-header">
+        <div className="header-content">
+          <h1 className="page-title">Classes</h1>
+          <p className="page-subtitle">Manage your classes and track student progress</p>
+        </div>
+        <Button className="create-class-btn">
+          <span className="btn-icon">+</span>
+          Join Class
+        </Button>
+      </div>
+
+      <div className="filters-section">
+        <div className="search-filter">
+          <Input
+            type="text"
+            placeholder="Search classes..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="search-input"
+          />
+        </div>
+        
+        <div className="filter-controls">
+          <select 
+            value={filterClass} 
+            onChange={(e) => setFilterClass(e.target.value)}
+            className="filter-dropdown"
+          >
+            <option value="All Classes">All Classes</option>
+            <option value="Biology">Biology</option>
+            <option value="AP Biology">AP Biology</option>
+          </select>
+          
+          <div className="view-toggle">
+            <button 
+              className={`view-btn ${viewMode === 'Grid' ? 'active' : ''}`}
+              onClick={() => setViewMode('Grid')}
+            >
+              Grid
+            </button>
+            <button 
+              className={`view-btn ${viewMode === 'List' ? 'active' : ''}`}
+              onClick={() => setViewMode('List')}
+            >
+              List
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className={`classes-grid ${viewMode.toLowerCase()}-view`}>
+        <div className="class-card">
+          <div className="class-header">
+            <div className="class-title-section">
+              <h3 className="class-title">Biology 1</h3>
+              <div className="class-meta">
+                <span className="class-period">Period 1</span>
+                <span className="student-count">32 students</span>
+              </div>
+            </div>
+          </div>
+          
+          <div className="class-stats">
+            <div className="stat-row">
+              <span className="stat-label">Attendance:</span>
+              <span className="stat-value attendance">94%</span>
+            </div>
+            <div className="stat-row">
+              <span className="stat-label">Avg Grade:</span>
+              <span className="stat-value grade">89%</span>
+            </div>
+          </div>
+          
+          <div className="attendance-bar">
+            <div className="bar-label">Weekly Attendance</div>
+            <div className="progress-bar">
+              <div className="progress-fill" style={{width: '94%'}}></div>
+            </div>
+            <div className="bar-percentage">94%</div>
+          </div>
+          
+          <div className="recent-activity">
+            <h4>Recent Activity</h4>
+            <p>Sarah Johnson submitted Cell Division Quiz</p>
+          </div>
+          
+          <div className="next-assignment">
+            <h4>Next Assignment</h4>
+            <div className="assignment-info">
+              <span className="assignment-title">Photosynthesis Lab</span>
+              <span className="assignment-due">Due Friday</span>
+            </div>
+          </div>
+          
+          <div className="class-actions">
+            <Button className="action-btn secondary">View Class</Button>
+            <Button className="action-btn primary">Students</Button>
+          </div>
+        </div>
+
+        <div className="class-card">
+          <div className="class-header">
+            <div className="class-title-section">
+              <h3 className="class-title">AP Biology</h3>
+              <div className="class-meta">
+                <span className="class-period">Period 2</span>
+                <span className="student-count">0 students</span>
+              </div>
+            </div>
+          </div>
+          
+          <div className="class-stats">
+            <div className="stat-row">
+              <span className="stat-label">Attendance:</span>
+              <span className="stat-value attendance na">N/A</span>
+            </div>
+            <div className="stat-row">
+              <span className="stat-label">Avg Grade:</span>
+              <span className="stat-value grade na">N/A</span>
+            </div>
+          </div>
+          
+          <div className="attendance-bar">
+            <div className="bar-label">Weekly Attendance</div>
+            <div className="progress-bar">
+              <div className="progress-fill" style={{width: '0%'}}></div>
+            </div>
+            <div className="bar-percentage">N/A</div>
+          </div>
+          
+          <div className="recent-activity">
+            <h4>Recent Activity</h4>
+            <p>No recent activity</p>
+          </div>
+          
+          <div className="next-assignment">
+            <h4>Next Assignment</h4>
+            <div className="assignment-info">
+              <span className="assignment-title">No assignments scheduled</span>
+            </div>
+          </div>
+          
+          <div className="class-actions">
+            <Button className="action-btn secondary">View Class</Button>
+            <Button className="action-btn primary">Students</Button>
+          </div>
+        </div>
+
+        <div className="class-card">
+          <div className="class-header">
+            <div className="class-title-section">
+              <h3 className="class-title">Biology 2</h3>
+              <div className="class-meta">
+                <span className="class-period">Period 3</span>
+                <span className="student-count">28 students</span>
+              </div>
+            </div>
+          </div>
+          
+          <div className="class-stats">
+            <div className="stat-row">
+              <span className="stat-label">Attendance:</span>
+              <span className="stat-value attendance">91%</span>
+            </div>
+            <div className="stat-row">
+              <span className="stat-label">Avg Grade:</span>
+              <span className="stat-value grade">85%</span>
+            </div>
+          </div>
+          
+          <div className="attendance-bar">
+            <div className="bar-label">Weekly Attendance</div>
+            <div className="progress-bar">
+              <div className="progress-fill" style={{width: '91%'}}></div>
+            </div>
+            <div className="bar-percentage">91%</div>
+          </div>
+          
+          <div className="recent-activity">
+            <h4>Recent Activity</h4>
+            <p>Mike Chen asked a question about genetics</p>
+          </div>
+          
+          <div className="next-assignment">
+            <h4>Next Assignment</h4>
+            <div className="assignment-info">
+              <span className="assignment-title">DNA Structure Quiz</span>
+              <span className="assignment-due">Due Monday</span>
+            </div>
+          </div>
+          
+          
+          <div className="class-actions">
+            <Button className="action-btn secondary">View Class</Button>
+            <Button className="action-btn primary">Students</Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Student Grades Component
+function StudentGrades() {
+  const [activeTab, setActiveTab] = useState('Gradebook');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterBy, setFilterBy] = useState('student');
+
+  const gradebookData = {
+    columns: [
+      { label: 'Student' },
+      { label: 'Cell Division Quiz', points: 25 },
+      { label: 'Photosynthesis Lab', points: 50 },
+      { label: 'Genetics Problem Set', points: 30 },
+      { label: 'Midterm Exam', points: 100 },
+      { label: 'Final Project', points: 75 },
+      { label: 'Overall Grade' }
+    ],
+    rows: [
+      {
+        student: { name: 'Sarah Johnson', email: 'sarah.johnson@school.edu' },
+        grades: ['23/25', '47/50', '28/30', '95/100', '70/75', 'A']
+      },
+      {
+        student: { name: 'Mike Chen', email: 'mike.chen@school.edu' },
+        grades: ['20/25', '42/50', '25/30', '82/100', '65/75', 'B+']
+      },
+      {
+        student: { name: 'Emily Rodriguez', email: 'emily.rodriguez@school.edu' },
+        grades: ['24/25', '49/50', '29/30', '88/100', '72/75', 'A-']
+      },
+      {
+        student: { name: 'David Wilson', email: 'david.wilson@school.edu' },
+        grades: ['18/25', '35/50', '22/30', '70/100', '55/75', 'C+']
+      }
+    ]
+  };
+
+  const getGradeColor = (grade: string, points?: number) => {
+    if (grade.includes('/')) {
+      const [earned, total] = grade.split('/').map(Number);
+      const percentage = (earned / total) * 100;
+      if (percentage >= 90) return 'high';
+      if (percentage >= 80) return 'medium';
+      if (percentage < 70) return 'low';
+      return 'medium';
+    }
+    // Letter grades
+    if (['A', 'A-'].includes(grade)) return 'high';
+    if (['B+', 'B', 'B-'].includes(grade)) return 'medium';
+    return 'low';
+  };
+
+  return (
+    <div className="student-grades">
+      <div className="grades-header">
+        <div className="header-content">
+          <h1 className="page-title">Grades</h1>
+          <div className="tab-navigation">
+            {['Gradebook', 'Analytics', 'Reports'].map((tab) => (
+              <button
+                key={tab}
+                className={`tab-btn ${activeTab === tab ? 'active' : ''}`}
+                onClick={() => setActiveTab(tab)}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+        </div>
+        
+        <div className="header-controls">
+          <Button className="control-btn secondary">Export</Button>
+          <Button className="control-btn secondary">Import</Button>
+          <Button className="control-btn secondary">Settings</Button>
+        </div>
+      </div>
+
+      <div className="grades-filters">
+        <div className="search-section">
+          <Input
+            type="text"
+            placeholder="Search students, assignments..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="search-input"
+          />
+        </div>
+        
+        <div className="filter-section">
+          <select 
+            value={filterBy} 
+            onChange={(e) => setFilterBy(e.target.value)}
+            className="filter-select"
+          >
+            <option value="student">Filter by Student</option>
+            <option value="assignment">Filter by Assignment</option>
+            <option value="grade">Filter by Grade</option>
+          </select>
+        </div>
+      </div>
+
+      {activeTab === 'Gradebook' && (
+        <div className="gradebook-container">
+          <div className="gradebook-table">
+            <div className="table-header">
+              {gradebookData.columns.map((column, index) => (
+                <div key={index} className={`header-cell ${index === 0 ? 'student-column' : 'grade-column'}`}>
+                  <div className="column-label">{column.label}</div>
+                  {column.points && (
+                    <div className="column-points">{column.points} pts</div>
+                  )}
+                </div>
+              ))}
+            </div>
+            
+            <div className="table-body">
+              {gradebookData.rows.map((row, rowIndex) => (
+                <div key={rowIndex} className="table-row">
+                  <div className="student-cell">
+                    <div className="student-info">
+                      <div className="student-name">{row.student.name}</div>
+                      <div className="student-email">{row.student.email}</div>
+                    </div>
+                  </div>
+                  
+                  {row.grades.map((grade, gradeIndex) => (
+                    <div 
+                      key={gradeIndex} 
+                      className={`grade-cell ${getGradeColor(grade, gradebookData.columns[gradeIndex + 1]?.points)}`}
+                    >
+                      <div className="grade-value">{grade}</div>
+                      {grade.includes('/') && (
+                        <div className="grade-percentage">
+                          {Math.round((parseInt(grade.split('/')[0]) / parseInt(grade.split('/')[1])) * 100)}%
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'Analytics' && (
+        <div className="analytics-content">
+          <div className="analytics-placeholder">
+            <h3>Grade Analytics</h3>
+            <p>Analytics dashboard coming soon...</p>
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'Reports' && (
+        <div className="reports-content">
+          <div className="reports-placeholder">
+            <h3>Grade Reports</h3>
+            <p>Reports dashboard coming soon...</p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Student Reports Component
+function StudentReports() {
+  const [typeFilter, setTypeFilter] = useState('All Types');
+  const [timeFilter, setTimeFilter] = useState('All Time');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showReportPopup, setShowReportPopup] = useState(false);
+  const [reportContent, setReportContent] = useState('');
+
+  const metricsSummary = [
+    { label: 'Total Reports', value: 47 },
+    { label: 'Scheduled', value: 12 },
+    { label: 'This Month', value: 8 },
+    { label: 'Shared', value: 23 }
+  ];
+
+  const reportTemplates = [
+    {
+      title: 'Academic Performance',
+      description: 'Student grades, test scores, and academic progress analysis',
+      actions: ['Generate', 'Preview']
+    },
+    {
+      title: 'Attendance Analysis',
+      description: 'Attendance patterns, trends, and at-risk student identification',
+      actions: ['Generate', 'Preview']
+    },
+    {
+      title: 'Teacher Performance',
+      description: 'Teaching effectiveness, student outcomes, and professional development',
+      actions: ['Generate', 'Preview']
+    },
+    {
+      title: 'Financial Summary',
+      description: 'Budget analysis, expense tracking, and financial performance metrics',
+      actions: ['Generate', 'Preview']
+    },
+    {
+      title: 'Parent Engagement',
+      description: 'Communication metrics, meeting participation, and feedback analysis',
+      actions: ['Generate', 'Preview']
+    },
+    {
+      title: 'Curriculum Analysis',
+      description: 'Course effectiveness, learning outcomes, and curriculum optimization',
+      actions: ['Generate', 'Preview']
+    }
+  ];
+
+  const recentReports = [
+    {
+      title: 'Q4 Academic Performance Report',
+      category: 'academic',
+      date: 'Jul 28, 2025',
+      size: '2.1 MB',
+      downloads: 15,
+      shared: true,
+      description: 'Comprehensive analysis of student academic performance for Q4 2024, including grade trends and subject-specific insights.',
+      actions: ['Download', 'Preview', 'Share', 'Delete']
+    },
+    {
+      title: 'Monthly Attendance Analysis',
+      category: 'attendance',
+      date: 'Jul 25, 2025',
+      size: '1.8 MB',
+      downloads: 8,
+      shared: true,
+      description: 'Detailed attendance patterns and chronic absenteeism analysis for December 2024.',
+      actions: ['Download', 'Preview', 'Share', 'Delete']
+    },
+    {
+      title: 'Teacher Effectiveness Review',
+      category: 'teacher',
+      date: 'Jul 23, 2025',
+      size: '3.4 MB',
+      downloads: 12,
+      shared: true,
+      description: 'Comprehensive teacher performance evaluation and professional development recommendations.',
+      actions: ['Download', 'Preview', 'Share', 'Delete']
+    },
+    {
+      title: 'Financial Summary Report',
+      category: 'financial',
+      date: 'Jul 22, 2025',
+      size: '1.9 MB',
+      downloads: 22,
+      shared: true,
+      description: 'Annual financial performance analysis including budget allocation and expense tracking.',
+      actions: ['Download', 'Preview', 'Share', 'Delete']
+    },
+    {
+      title: 'Parent Engagement Metrics',
+      category: 'parent',
+      date: 'Jul 19, 2025',
+      size: '965 KB',
+      downloads: 6,
+      shared: true,
+      description: 'Parent feedback, meeting attendance, and engagement metrics breakdown.',
+      actions: ['Download', 'Preview', 'Share', 'Delete']
+    }
+  ];
+
+  const getCategoryIcon = (category: string) => {
+    switch (category) {
+      case 'academic': return '📚';
+      case 'attendance': return '📅';
+      case 'teacher': return '👨‍🏫';
+      case 'financial': return '💰';
+      case 'parent': return '👨‍👩‍👧‍👦';
+      default: return '📄';
+    }
+  };
+
+  // Function to generate the academic performance report content
+  const generateAcademicReport = () => {
+    return `Academic Performance Report for Student
+
+Overall Performance Summary:
+
+Based on comprehensive analysis of your recent academic activities, you've shown commendable progress in several key areas. Your dedication to learning is evident through consistent participation and the quality of work submitted. In mathematics, you've demonstrated strong analytical skills, particularly in algebraic problem-solving. Your approach to complex problems shows logical reasoning and persistence.
+
+Subject-Specific Feedback:
+
+In science classes, your curiosity and inquisitiveness have been notable. Your lab reports show attention to detail and a genuine interest in understanding scientific concepts. However, there's room for improvement in organizing your thoughts more clearly in written explanations. In English literature, your creative writing has shown significant growth. Your ability to analyze character development and themes in novels has improved substantially. Continue to work on supporting your arguments with more textual evidence.
+
+Teacher Comments:
+
+Your homeroom teacher notes that you're a respectful and engaged student who contributes positively to classroom discussions. They've observed that you sometimes hesitate to ask questions when concepts aren't clear. Remember, seeking clarification is a sign of intellectual curiosity, not weakness. Your art teacher has praised your creativity and originality in projects. They encourage you to experiment with different mediums to further develop your artistic expression.
+
+Recommendations for Continued Growth:
+
+To enhance your academic journey, consider forming study groups with classmates to deepen your understanding of challenging topics. Regular review of class materials and seeking extra help when needed will support your continued success. Set specific, measurable goals for each subject and track your progress. This will help you stay motivated and focused on continuous improvement.`;
+  };
+
+  // Function to handle generating the academic report
+  const handleGenerateReport = () => {
+    setShowReportPopup(true);
+    setReportContent(''); // Reset content
+    
+    // Generate the full report content
+    const fullReport = generateAcademicReport();
+    
+    // Animate the text character by character
+    let index = 0;
+    const interval = setInterval(() => {
+      if (index < fullReport.length) {
+        setReportContent(prev => prev + fullReport.charAt(index));
+        index++;
+      } else {
+        clearInterval(interval);
+      }
+    }, 10); // Adjust speed as needed (lower = faster)
+  };
+
+  return (
+    <div className="student-reports">
+      <div className="reports-header">
+        <div className="header-content">
+          <h1 className="page-title">Reports</h1>
+          <p className="page-subtitle">Comprehensive reporting and analytics dashboard</p>
+        </div>
+        <div className="header-actions">
+          <Button className="action-btn secondary">
+            <span className="btn-icon">📅</span>
+            Schedule Report
+          </Button>
+          <Button className="action-btn primary">
+            <span className="btn-icon">+</span>
+            Create Report
+          </Button>
+        </div>
+      </div>
+
+      {/* Metrics Summary */}
+      <div className="metrics-summary">
+        {metricsSummary.map((metric, index) => (
+          <div key={index} className="metric-card">
+            <div className="metric-value">{metric.value}</div>
+            <div className="metric-label">{metric.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Report Templates */}
+      <div className="report-templates-section">
+        <div className="section-header">
+          <h2 className="section-title">Report Templates</h2>
+          <p className="section-subtitle">Generate reports from pre-built templates</p>
+        </div>
+        <div className="templates-grid">
+          {reportTemplates.map((template, index) => (
+            <div key={index} className="template-card">
+              <div className="template-content">
+                <h3 className="template-title">{template.title}</h3>
+                <p className="template-description">{template.description}</p>
+              </div>
+              <div className="template-actions">
+                {template.actions.map((action, actionIndex) => (
+                  <Button 
+                    key={actionIndex} 
+                    className={`template-btn ${action.toLowerCase() === 'generate' ? 'primary' : 'secondary'}`}
+                    onClick={() => {
+                      if (action.toLowerCase() === 'generate' && template.title === 'Academic Performance') {
+                        handleGenerateReport();
+                      }
+                    }}
+                  >
+                    {action}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Recent Reports */}
+      <div className="recent-reports-section">
+        <div className="section-header">
+          <h2 className="section-title">Recent Reports</h2>
+          <div className="filters-section">
+            <div className="search-section">
+              <Input
+                type="text"
+                placeholder="Search reports..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="search-input"
+              />
+            </div>
+            <div className="filter-controls">
+              <select 
+                value={typeFilter} 
+                onChange={(e) => setTypeFilter(e.target.value)}
+                className="filter-select"
+              >
+                <option value="All Types">All Types</option>
+                <option value="Academic">Academic</option>
+                <option value="Attendance">Attendance</option>
+                <option value="Financial">Financial</option>
+                <option value="Teacher">Teacher</option>
+                <option value="Parent">Parent</option>
+              </select>
+              <select 
+                value={timeFilter} 
+                onChange={(e) => setTimeFilter(e.target.value)}
+                className="filter-select"
+              >
+                <option value="All Time">All Time</option>
+                <option value="This Week">This Week</option>
+                <option value="This Month">This Month</option>
+                <option value="This Quarter">This Quarter</option>
+                <option value="This Year">This Year</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        
+        <div className="reports-list">
+          {recentReports.map((report, index) => (
+            <div key={index} className="report-card">
+              <div className="report-icon">
+                {getCategoryIcon(report.category)}
+              </div>
+              <div className="report-content">
+                <div className="report-header">
+                  <h3 className="report-title">{report.title}</h3>
+                  <div className="report-meta">
+                    <span className="report-date">{report.date}</span>
+                    <span className="report-size">{report.size}</span>
+                    {report.shared && <span className="shared-badge">Shared</span>}
+                  </div>
+                </div>
+                <p className="report-description">{report.description}</p>
+                <div className="report-stats">
+                  <span className="download-count">📥 {report.downloads} downloads</span>
+                </div>
+              </div>
+              <div className="report-actions">
+                {report.actions.map((action, actionIndex) => (
+                  <Button 
+                    key={actionIndex} 
+                    className={`report-action-btn ${action.toLowerCase()}`}
+                    size="sm"
+                  >
+                    {action === 'Download' && '⬇️'}
+                    {action === 'Preview' && '👁️'}
+                    {action === 'Share' && '🔗'}
+                    {action === 'Delete' && '🗑️'}
+                    <span className="btn-text">{action}</span>
+                  </Button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <AcademicReportPopup 
+        show={showReportPopup}
+        onClose={() => setShowReportPopup(false)}
+        content={reportContent}
+      />
     </div>
   );
 }
