@@ -146,7 +146,14 @@ export default function DashboardPage() {
       {/* Sidebar */}
       <aside className="dashboard-sidebar">
         <div className="sidebar-header">
-          <h2 className="sidebar-title">Polaris</h2>
+          <div className="header-content">
+            <img 
+              src="/polaris-logo.png" 
+              alt="Polaris Logo" 
+              className="polaris-logo"
+            />
+            <h2 className="sidebar-title">Polaris</h2>
+          </div>
         </div>
         
         <nav className="sidebar-nav">
@@ -1672,8 +1679,7 @@ function StudentDashboard() {
 // Home Base View Component
 function HomeBaseView() {
   const [isVisible, setIsVisible] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [showSearchResults, setShowSearchResults] = useState(false);
+
   const [selectedStudent, setSelectedStudent] = useState<any>(null);
   const [showStudentPopup, setShowStudentPopup] = useState(false);
   const [teacherComments, setTeacherComments] = useState('');
@@ -1790,17 +1796,7 @@ function HomeBaseView() {
     }
   ];
 
-  // Filter students based on search query
-  const filteredStudents = students.filter(student =>
-    student.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
 
-  // Handle search input change
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchQuery(value);
-    setShowSearchResults(value.length > 0);
-  };
 
   // Handle student selection
   const handleStudentSelect = (student: any) => {
@@ -1811,17 +1807,7 @@ function HomeBaseView() {
     setTeacherComments('');
   };
 
-  // Close search results when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
-        setShowSearchResults(false);
-      }
-    };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   const containerSpringProps = useSpring({
     opacity: isVisible ? 1 : 0,
@@ -1835,32 +1821,29 @@ function HomeBaseView() {
       <div className="dashboard-header">
         <h1 className="page-title">Home Base</h1>
         <div className="header-actions">
-          <div className="search-container" ref={searchRef}>
-            <Input 
-              placeholder="Search students..." 
-              className="search-input"
-              value={searchQuery}
-              onChange={handleSearchChange}
-            />
-            {showSearchResults && filteredStudents.length > 0 && (
-              <div className="appflowy-search-results">
-                {filteredStudents.map((student) => (
-                  <div 
-                    key={student.id}
-                    className="appflowy-search-result-item"
-                    onClick={() => handleStudentSelect(student)}
-                  >
-                    <Avatar className="appflowy-student-avatar">
-                      <AvatarFallback>{student.avatar}</AvatarFallback>
-                    </Avatar>
-                    <div className="appflowy-student-info">
-                      <span className="appflowy-student-name">{student.name}</span>
-                      <span className="appflowy-student-year">{student.year}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+          <div className="student-search-dropdown" ref={searchRef}>
+            <select 
+              className="student-select"
+              value={selectedStudent?.id || ''}
+              onChange={(e) => {
+                const studentId = parseInt(e.target.value);
+                
+                if (studentId) {
+                  const student = students.find(s => s.id === studentId);
+                  
+                  if (student) {
+                    handleStudentSelect(student);
+                  }
+                }
+              }}
+            >
+              <option value="" disabled>Select a student...</option>
+              {students.map((student) => (
+                <option key={student.id} value={student.id}>
+                  {student.name} - {student.year}
+                </option>
+              ))}
+            </select>
           </div>
           <Button className="create-class-btn">Create Class</Button>
         </div>
@@ -2973,7 +2956,7 @@ function SettingsView() {
               <div className="profile-form">
                 <div className="form-group">
                   <label>Full Name</label>
-                  <Input type="text" defaultValue="Mr. Harp" />
+                  <Input type="text" defaultValue="Mr. Johnson" />
                 </div>
                 <div className="form-group">
                   <label>Email</label>
